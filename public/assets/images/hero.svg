@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 520" role="img" aria-label="Logoya özel baskılı kurumsal polo yaka iş kıyafeti">
+  <rect width="560" height="520" rx="28" fill="#ffffff"/>
+  <circle cx="280" cy="250" r="205" fill="#eef2f6"/>
+
+  <!-- Polo gömlek -->
+  <g>
+    <!-- kollar -->
+    <polygon points="212,162 150,206 180,244 216,214" fill="#0E2A47"/>
+    <polygon points="348,162 410,206 380,244 344,214" fill="#0E2A47"/>
+    <!-- gövde -->
+    <rect x="206" y="160" width="148" height="262" rx="18" fill="#0E2A47"/>
+    <!-- yaka boşluğu -->
+    <ellipse cx="280" cy="162" rx="34" ry="14" fill="#eef2f6"/>
+    <!-- polo yaka (turuncu) -->
+    <polygon points="248,158 280,180 280,158" fill="#F26A21"/>
+    <polygon points="312,158 280,180 280,158" fill="#F26A21"/>
+    <!-- patı ve düğmeler -->
+    <rect x="276" y="172" width="8" height="64" rx="4" fill="#F26A21"/>
+    <circle cx="280" cy="190" r="3" fill="#0E2A47"/>
+    <circle cx="280" cy="212" r="3" fill="#0E2A47"/>
+    <!-- göğüs logosu -->
+    <circle cx="322" cy="214" r="20" fill="#F26A21"/>
+    <path d="M314 214 l5 5 l9 -10" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Etiket çipi -->
+  <g>
+    <rect x="40" y="64" width="210" height="46" rx="23" fill="#F26A21"/>
+    <text x="64" y="93" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">LOGONUZA ÖZEL</text>
+  </g>
+
+  <!-- Onay çipi -->
+  <g>
+    <rect x="372" y="392" width="150" height="48" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+    <circle cx="398" cy="416" r="13" fill="#0E2A47"/>
+    <path d="M392 416 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="418" y="422" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="700" fill="#0E2A47">Hızlı teslim</text>
+  </g>
+
+  <!-- Renk paleti -->
+  <g>
+    <circle cx="232" cy="472" r="13" fill="#0E2A47"/>
+    <circle cx="266" cy="472" r="13" fill="#F26A21"/>
+    <circle cx="300" cy="472" r="13" fill="#23272E"/>
+    <circle cx="334" cy="472" r="13" fill="#cfd8e3"/>
+  </g>
+</svg>

@@ -1,0 +1,5 @@
+User-agent: *
+Disallow:
+
+# Yayina alirken sitemap ekleyebilirsiniz:
+# Sitemap: https://www.formmix.com/sitemap.xml

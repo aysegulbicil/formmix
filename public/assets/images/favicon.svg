@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="FORMMIX">
+  <rect width="48" height="48" rx="12" fill="#0E2A47"/>
+  <path transform="translate(11,12) scale(1.1)" fill="#F26A21"
+        d="M8 2 3 6l2 4 2-1v10h10V9l2 1 2-4-5-4c-.6 1.9-5.4 1.9-6 0z"/>
+</svg>

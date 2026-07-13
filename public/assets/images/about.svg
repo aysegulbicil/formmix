@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 460" role="img" aria-label="FORMMIX kurumsal kıyafet giyen profesyonel ekip">
+  <rect width="520" height="460" rx="24" fill="#f7f9fb"/>
+  <path d="M0 96 Q260 24 520 96 V0 H0 Z" fill="#0E2A47"/>
+  <path transform="translate(28,26) scale(0.85)" fill="#F26A21" d="M8 2 3 6l2 4 2-1v10h10V9l2 1 2-4-5-4c-.6 1.9-5.4 1.9-6 0z"/>
+  <text x="62" y="52" font-family="'Segoe UI', Arial, sans-serif" font-size="24" font-weight="800"><tspan fill="#fff">FORM</tspan><tspan fill="#F26A21">MIX</tspan></text>
+
+  <rect x="0" y="402" width="520" height="58" fill="#e7edf3"/>
+
+  <!-- 3 kişilik tek tip ekip -->
+  <g>
+    <circle cx="150" cy="190" r="30" fill="#E7B58E"/>
+    <path d="M96 388 V250 L126 224 H174 L204 250 V388 Z" fill="#0E2A47"/>
+    <polygon points="136,224 150,240 150,224" fill="#F26A21"/>
+    <polygon points="164,224 150,240 150,224" fill="#F26A21"/>
+    <circle cx="126" cy="266" r="9" fill="#F26A21"/>
+  </g>
+  <g>
+    <circle cx="260" cy="176" r="32" fill="#E7B58E"/>
+    <path d="M202 388 V236 L234 208 H286 L318 236 V388 Z" fill="#0E2A47"/>
+    <polygon points="246,208 260,226 260,208" fill="#F26A21"/>
+    <polygon points="274,208 260,226 260,208" fill="#F26A21"/>
+    <circle cx="234" cy="254" r="10" fill="#F26A21"/>
+  </g>
+  <g>
+    <circle cx="372" cy="190" r="30" fill="#E7B58E"/>
+    <path d="M318 388 V250 L348 224 H396 L426 250 V388 Z" fill="#0E2A47"/>
+    <polygon points="358,224 372,240 372,224" fill="#F26A21"/>
+    <polygon points="386,224 372,240 372,224" fill="#F26A21"/>
+    <circle cx="348" cy="266" r="9" fill="#F26A21"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 50" role="img" aria-label="FORMMIX">
+  <rect x="1" y="7" width="36" height="36" rx="10" fill="#F26A21"/>
+  <path transform="translate(7,13) scale(0.95)" fill="#ffffff"
+        d="M8 2 3 6l2 4 2-1v10h10V9l2 1 2-4-5-4c-.6 1.9-5.4 1.9-6 0z"/>
+  <text x="48" y="34" font-family="'Segoe UI', Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="0.3">
+    <tspan fill="#ffffff">FORM</tspan><tspan fill="#F26A21">MIX</tspan>
+  </text>
+</svg>

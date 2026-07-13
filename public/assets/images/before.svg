@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 330" role="img" aria-label="Tek tip olmayan dağınık görünümlü ekip">
+  <rect width="440" height="330" rx="16" fill="#eef0f2"/>
+  <rect x="0" y="288" width="440" height="42" fill="#e3e7eb"/>
+
+  <!-- Kişi 1 (gri) -->
+  <circle cx="110" cy="120" r="22" fill="#E7B58E"/>
+  <path d="M70 270 V168 L92 150 H128 L150 168 V270 Z" fill="#98a4b2"/>
+  <path d="M100 150 L110 162 L120 150 Z" fill="#eef0f2"/>
+
+  <!-- Kişi 2 (mavi-gri, daha uzun) -->
+  <circle cx="222" cy="110" r="22" fill="#E7B58E"/>
+  <path d="M182 270 V158 L204 140 H240 L262 158 V270 Z" fill="#6f7f92"/>
+  <path d="M212 140 L222 152 L232 140 Z" fill="#eef0f2"/>
+
+  <!-- Kişi 3 (kahve, daha kısa) -->
+  <circle cx="334" cy="128" r="22" fill="#E7B58E"/>
+  <path d="M294 270 V176 L316 158 H352 L374 176 V270 Z" fill="#b58a72"/>
+  <path d="M324 158 L334 170 L344 158 Z" fill="#eef0f2"/>
+
+  <text x="220" y="312" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="600" fill="#7d8794">Farklı, dağınık kıyafetler</text>
+</svg>

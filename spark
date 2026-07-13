@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+use CodeIgniter\Boot;
+use Config\Paths;
+
+/*
+ * --------------------------------------------------------------------
+ * CodeIgniter command-line tools (spark)
+ * --------------------------------------------------------------------
+ */
+
+// PHP surum kontrolu
+$minPhpVersion = '8.1';
+if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
+    $message = sprintf(
+        'CodeIgniter calismasi icin PHP surumunuz %s veya uzeri olmalidir. Mevcut surum: %s',
+        $minPhpVersion,
+        PHP_VERSION,
+    );
+
+    exit($message);
+}
+
+// php-cgi ile calistirilmaz; php-cli gerekir
+if (str_starts_with(PHP_SAPI, 'cgi')) {
+    exit("The cli tool is not supported when running php-cgi. It needs php-cli to function!\n\n");
+}
+
+// On kontrolcu yolu
+define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR);
+
+require FCPATH . '../app/Config/Paths.php';
+$paths = new Paths();
+
+require $paths->systemDirectory . '/Boot.php';
+
+exit(Boot::bootSpark($paths));

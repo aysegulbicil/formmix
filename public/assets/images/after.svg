@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 330" role="img" aria-label="Logolu tek tip kurumsal kıyafet giyen düzenli ekip">
+  <rect width="440" height="330" rx="16" fill="#e9f0f7"/>
+  <rect x="0" y="288" width="440" height="42" fill="#d8e4f0"/>
+
+  <!-- Kişi 1 -->
+  <circle cx="110" cy="118" r="22" fill="#E7B58E"/>
+  <path d="M70 270 V166 L92 148 H128 L150 166 V270 Z" fill="#0E2A47"/>
+  <polygon points="100,148 110,160 110,148" fill="#F26A21"/>
+  <polygon points="120,148 110,160 110,148" fill="#F26A21"/>
+  <circle cx="92" cy="178" r="7" fill="#F26A21"/>
+
+  <!-- Kişi 2 -->
+  <circle cx="222" cy="118" r="22" fill="#E7B58E"/>
+  <path d="M182 270 V166 L204 148 H240 L262 166 V270 Z" fill="#0E2A47"/>
+  <polygon points="212,148 222,160 222,148" fill="#F26A21"/>
+  <polygon points="232,148 222,160 222,148" fill="#F26A21"/>
+  <circle cx="204" cy="178" r="7" fill="#F26A21"/>
+
+  <!-- Kişi 3 -->
+  <circle cx="334" cy="118" r="22" fill="#E7B58E"/>
+  <path d="M294 270 V166 L316 148 H352 L374 166 V270 Z" fill="#0E2A47"/>
+  <polygon points="324,148 334,160 334,148" fill="#F26A21"/>
+  <polygon points="344,148 334,160 334,148" fill="#F26A21"/>
+  <circle cx="316" cy="178" r="7" fill="#F26A21"/>
+
+  <text x="220" y="312" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="700" fill="#0E2A47">Logolu, tek tip kurumsal görünüm</text>
+</svg>

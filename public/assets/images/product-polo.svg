@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Polo yaka iş kıyafeti">
+  <rect width="400" height="300" fill="#f2f4f7"/>
+  <polygon points="150,84 96,122 122,152 156,128" fill="#0E2A47"/>
+  <polygon points="250,84 304,122 278,152 244,128" fill="#0E2A47"/>
+  <rect x="146" y="82" width="108" height="170" rx="16" fill="#0E2A47"/>
+  <ellipse cx="200" cy="84" rx="26" ry="11" fill="#f2f4f7"/>
+  <polygon points="178,82 200,100 200,82" fill="#F26A21"/>
+  <polygon points="222,82 200,100 200,82" fill="#F26A21"/>
+  <rect x="196" y="94" width="8" height="52" rx="4" fill="#F26A21"/>
+  <circle cx="200" cy="110" r="2.6" fill="#0E2A47"/>
+  <circle cx="200" cy="128" r="2.6" fill="#0E2A47"/>
+  <circle cx="232" cy="126" r="15" fill="#F26A21"/>
+  <path d="M226 126 l4 4 l7 -8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

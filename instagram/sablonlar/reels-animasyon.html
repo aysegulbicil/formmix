@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>FORMMIX — Animasyonlu Reels Şablonu (9:16)</title>
+<style>
+/* =======================================================================
+   FORMMIX ANİMASYONLU REELS  ·  1080 x 1920 (dikey)  ·  ~18 sn döngü
+   -----------------------------------------------------------------------
+   NASIL VİDEOYA ÇEVRİLİR:
+   1) Bu dosyayı tarayıcıda aç (Chrome önerilir). Animasyon kendi oynar, döner.
+   2) EKRAN KAYDI al:
+        • Windows: Win + Alt + R  (Xbox Game Bar)  → tarayıcı penceresini kaydeder.
+        • Daha temiz: OBS Studio (ücretsiz) ile "Pencere Yakalama" + 1080x1920 sahne.
+   3) Bir tam tur (≈18 sn) kaydet, sonra CapCut'a alıp müzik ekle.
+   -----------------------------------------------------------------------
+   DÜZENLE: aşağıdaki --img-1 / --img-2 yollarını ve HTML'deki yazıları değiştir.
+   ======================================================================= */
+
+:root{
+  --navy:     #0E2A47;
+  --navy-700: #0A2038;
+  --orange:   #F26A21;
+  --white:    #ffffff;
+
+  /* DÜZENLE — sahnelerde kullanılan ürün görselleri */
+  --img-1: url("../gorseller/Ekran%20g%C3%B6r%C3%BCnt%C3%BCs%C3%BC%202026-06-30%20093521.png"); /* yeşil polo / toplu üretim */
+  --img-2: url("../gorseller/Ekran%20g%C3%B6r%C3%BCnt%C3%BCs%C3%BC%202026-06-30%20093541.png"); /* iş pantolonu */
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; }
+body{
+  background:#111; display:flex; justify-content:center; align-items:center;
+  min-height:100vh; font-family:"Montserrat","Segoe UI",Arial,sans-serif;
+  overflow:hidden;
+}
+
+/* 1080x1920 sahne. Ekrana sığsın diye yüksekliğe göre ölçeklenir;
+   kayıt sırasında tarayıcıyı tam ekran yap, kare net görünür. */
+.stage{
+  position:relative; width:1080px; height:1920px;
+  transform: scale(calc(100vh / 1920 * 0.96));
+  transform-origin:center;
+  background:var(--navy); overflow:hidden; color:var(--white);
+  box-shadow:0 0 80px rgba(0,0,0,.6);
+}
+
+/* Her sahne tüm kareyi kaplar; opacity döngü ile görünüp kaybolur */
+.scene{ position:absolute; inset:0; opacity:0; }
+.scene__photo{
+  position:absolute; inset:0; background-size:cover; background-position:center;
+}
+.shade{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(14,42,71,.85) 0%, rgba(14,42,71,.15) 30%, rgba(10,32,56,.85) 100%);
+}
+.wrap{ position:absolute; inset:0; display:flex; flex-direction:column;
+  justify-content:center; align-items:center; text-align:center; padding:0 90px; }
+
+/* ---------- Logo ---------- */
+.logo{ font-size:128px; font-weight:800; letter-spacing:-2px; line-height:1; }
+.logo .o{ color:var(--orange); }
+.logo__sub{ margin-top:18px; font-size:30px; font-weight:600; letter-spacing:10px;
+  color:#cdd8e6; text-transform:uppercase; }
+
+/* ---------- Tipografi ---------- */
+.kicker{ font-size:30px; font-weight:700; letter-spacing:8px; color:var(--orange);
+  text-transform:uppercase; margin-bottom:26px; }
+.big{ font-size:108px; font-weight:800; line-height:1.05; letter-spacing:-2px;
+  text-shadow:0 6px 30px rgba(0,0,0,.5); }
+.big .hl{ color:var(--orange); }
+.mid{ font-size:64px; font-weight:800; line-height:1.1; }
+
+.badge{ display:inline-block; background:var(--orange); color:#fff; font-size:30px;
+  font-weight:700; letter-spacing:1px; padding:14px 30px; border-radius:999px;
+  text-transform:uppercase; }
+
+.feats{ margin-top:20px; }
+.feats li{ list-style:none; font-size:44px; font-weight:600; color:#eaf1f9;
+  display:flex; align-items:center; gap:20px; margin:22px 0; justify-content:flex-start; }
+.feats li::before{ content:"✓"; color:var(--orange); font-weight:900; }
+
+/* ---------- CTA kartı ---------- */
+.cta{ display:flex; flex-direction:column; align-items:center; gap:30px; }
+.cta__phone{ display:flex; align-items:center; gap:24px; background:var(--orange);
+  border-radius:26px; padding:30px 50px; }
+.cta__ico{ width:84px; height:84px; border-radius:50%; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:46px; }
+.cta__phone b{ font-size:64px; font-weight:800; line-height:1; }
+.cta__note{ font-size:34px; font-weight:600; letter-spacing:4px; color:#cdd8e6;
+  text-transform:uppercase; }
+
+/* =========================================================
+   ZAMANLAMA — tek 18sn döngü, her sahne kendi penceresinde
+   ========================================================= */
+
+/* Sahne görünürlük pencereleri (opacity) */
+.s1{ animation: s1 18s infinite; }
+.s2{ animation: s2 18s infinite; }
+.s3{ animation: s3 18s infinite; }
+.s4{ animation: s4 18s infinite; }
+.s5{ animation: s5 18s infinite; }
+
+@keyframes s1{ 0%{opacity:0} 2%{opacity:1} 14%{opacity:1} 17%{opacity:0} 100%{opacity:0} }
+@keyframes s2{ 0%,16%{opacity:0} 18%{opacity:1} 31%{opacity:1} 33%{opacity:0} 100%{opacity:0} }
+@keyframes s3{ 0%,32%{opacity:0} 34%{opacity:1} 53%{opacity:1} 55%{opacity:0} 100%{opacity:0} }
+@keyframes s4{ 0%,54%{opacity:0} 56%{opacity:1} 75%{opacity:1} 77%{opacity:0} 100%{opacity:0} }
+@keyframes s5{ 0%,76%{opacity:0} 78%{opacity:1} 100%{opacity:1} }
+
+/* İç hareketler — sahne penceresiyle senkron (18sn) */
+.an-logo{ animation: anLogo 18s infinite; }
+@keyframes anLogo{ 0%{transform:scale(.82);opacity:0} 3%{transform:scale(1);opacity:1} 14%{transform:scale(1.04)} 17%{opacity:0} 100%{opacity:0} }
+
+.an-up2{ animation: anUp2 18s infinite; }
+@keyframes anUp2{ 0%,16%{transform:translateY(40px);opacity:0} 19%{transform:translateY(0);opacity:1} 33%{opacity:0} 100%{opacity:0} }
+
+/* Görsellerde hafif "ken burns" yakınlaşma */
+.zoom3{ animation: zoom3 18s infinite; }
+@keyframes zoom3{ 0%,32%{transform:scale(1.0)} 55%{transform:scale(1.12)} 100%{transform:scale(1.12)} }
+.zoom4{ animation: zoom4 18s infinite; }
+@keyframes zoom4{ 0%,54%{transform:scale(1.12)} 77%{transform:scale(1.0)} 100%{transform:scale(1.0)} }
+
+.an-up3{ animation: anUp3 18s infinite; }
+@keyframes anUp3{ 0%,32%{transform:translateY(50px);opacity:0} 36%{transform:translateY(0);opacity:1} 55%{opacity:0} 100%{opacity:0} }
+
+.an-up4{ animation: anUp4 18s infinite; }
+@keyframes anUp4{ 0%,54%{transform:translateY(50px);opacity:0} 58%{transform:translateY(0);opacity:1} 77%{opacity:0} 100%{opacity:0} }
+
+.an-cta{ animation: anCta 18s infinite; }
+@keyframes anCta{ 0%,76%{transform:scale(.85);opacity:0} 80%{transform:scale(1);opacity:1} 100%{opacity:1} }
+
+/* Alt ilerleme çubuğu (kayıt için referans) */
+.bar{ position:absolute; bottom:0; left:0; height:8px; background:var(--orange);
+  animation: bar 18s linear infinite; }
+@keyframes bar{ from{width:0} to{width:100%} }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- SAHNE 1 — Logo açılış -->
+  <section class="scene s1">
+    <div class="wrap">
+      <div class="an-logo">
+        <div class="logo">form<span class="o">mix</span></div>
+        <div class="logo__sub">Kurumsal İş Elbiseleri</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAHNE 2 — Slogan -->
+  <section class="scene s2">
+    <div class="wrap">
+      <div class="an-up2">
+        <div class="kicker">Konya</div>
+        <h1 class="big">Ekibiniz<br><span class="hl">markanızı</span><br>temsil eder.</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAHNE 3 — Toplu üretim (yeşil polo) -->
+  <section class="scene s3">
+    <div class="scene__photo zoom3" style="background-image:var(--img-1)"></div>
+    <div class="shade"></div>
+    <div class="wrap" style="justify-content:flex-end; padding-bottom:160px;">
+      <div class="an-up3">
+        <span class="badge">Toplu Üretim</span>
+        <h2 class="mid" style="margin-top:30px;">Bir firmaya tam kadro.<br>Tek logo, tek ekip.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAHNE 4 — Özellikler (iş pantolonu fonda) -->
+  <section class="scene s4">
+    <div class="scene__photo zoom4" style="background-image:var(--img-2)"></div>
+    <div class="shade"></div>
+    <div class="wrap" style="align-items:flex-start; text-align:left;">
+      <ul class="feats an-up4">
+        <li>Logonuza özel DTF baskı</li>
+        <li>20 renk seçeneği</li>
+        <li>Minimum 5 adet</li>
+        <li>Ücretsiz tasarım desteği</li>
+        <li>Hızlı üretim & teslimat</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SAHNE 5 — CTA kapanış -->
+  <section class="scene s5">
+    <div class="wrap">
+      <div class="cta an-cta">
+        <div class="logo" style="font-size:84px;">form<span class="o">mix</span></div>
+        <div class="cta__note">Logonu gönder, teklifini hazırlayalım</div>
+        <div class="cta__phone">
+          <div class="cta__ico">📲</div>
+          <b>0539 487 31 90</b>
+        </div>
+        <div class="cta__note">WhatsApp · 7/24</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="bar"></div>
+</div>
+
+</body>
+</html>

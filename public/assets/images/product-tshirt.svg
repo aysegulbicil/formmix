@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Baskılı tişört">
+  <rect width="400" height="300" fill="#f2f4f7"/>
+  <polygon points="150,84 96,122 122,152 156,128" fill="#0E2A47"/>
+  <polygon points="250,84 304,122 278,152 244,128" fill="#0E2A47"/>
+  <rect x="146" y="82" width="108" height="170" rx="16" fill="#0E2A47"/>
+  <ellipse cx="200" cy="84" rx="28" ry="12" fill="#f2f4f7"/>
+  <path d="M173 88 Q200 106 227 88" fill="none" stroke="#1c3f63" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="200" cy="150" r="20" fill="#F26A21"/>
+  <path d="M192 150 l5 5 l10 -11" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

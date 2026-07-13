@@ -1,0 +1,11 @@
+FORMMIX — Katalog klasörü
+
+Ürün kataloğu PDF dosyanızı bu klasöre şu adla koyun:
+
+    formmix-katalog.pdf
+
+Dosya buraya eklendiğinde "Katalog" sayfasındaki
+"Kataloğu Görüntüle" ve "İndir (PDF)" butonları otomatik olarak aktif olur.
+
+Tam yol:
+    public/assets/catalog/formmix-katalog.pdf

@@ -1,0 +1,29 @@
+# Dizin listelemeyi kapat
+Options All -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Alt klasorde kurulum yaptiysaniz (orn. /frommix/public) ve temiz URL
+    # sorun cikarirsa asagidaki satiri acin ve yolu kurulumunuza gore ayarlayin:
+    # RewriteBase /frommix/public/
+
+    # Sonundaki "/" karakterini temizle
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Gercek bir dosya/dizin degilse istegi on kontrolcuye (index.php) yonlendir
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^([\s\S]*)$ index.php/$1 [L,NC,QSA]
+
+    # Authorization basligini ilet
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^(.*)$ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    # mod_rewrite yoksa tum 404'leri on kontrolcuye gonder
+    ErrorDocument 404 index.php
+</IfModule>

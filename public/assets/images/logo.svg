@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 128" role="img" aria-label="FORMMIX İş Elbiseleri">
+  <!-- Amblem: lacivert kare içinde beyaz gömlek + turuncu kravat -->
+  <rect x="2" y="8" width="112" height="112" rx="26" fill="#0E2A47"/>
+  <path d="M24 116 V60 L42 44 H74 L92 60 V116 Z" fill="#ffffff"/>
+  <path d="M50 44 H66 L58 66 Z" fill="#0E2A47"/>
+  <path d="M54 50 H62 L58 74 Z" fill="#F26A21"/>
+  <rect x="57" y="66" width="2" height="46" fill="#0E2A47"/>
+  <circle cx="58" cy="82" r="2.4" fill="#0E2A47"/>
+  <circle cx="58" cy="94" r="2.4" fill="#0E2A47"/>
+  <circle cx="58" cy="106" r="2.4" fill="#0E2A47"/>
+  <path d="M92 96 V116 H72 a20 20 0 0 0 20-20Z" fill="#F26A21" opacity="0.92"/>
+
+  <!-- Kelime markası -->
+  <text x="132" y="74" font-family="Arial, 'Helvetica Neue', sans-serif" font-size="54" font-weight="800" letter-spacing="-1">
+    <tspan fill="#0E2A47">FORM</tspan><tspan fill="#F26A21">MIX</tspan>
+  </text>
+  <text x="134" y="104" font-family="Arial, 'Helvetica Neue', sans-serif" font-size="17.5" font-weight="700" letter-spacing="6" fill="#0E2A47">İŞ ELBİSELERİ</text>
+</svg>

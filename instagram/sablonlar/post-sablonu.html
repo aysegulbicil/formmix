@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>FORMMIX — Instagram Post Şablonu</title>
+<style>
+  /* =====================================================================
+     FORMMIX INSTAGRAM POST ŞABLONU  (1080 x 1080)
+     ---------------------------------------------------------------------
+     NASIL KULLANILIR:
+     1) Bu dosyayı çift tıklayıp tarayıcıda aç.
+     2) Aşağıdaki "DÜZENLE" işaretli yerleri değiştir:
+        - --urun-gorsel : ürün fotoğrafının yolu (gorseller/ içinden)
+        - Başlık, alt metin, rozet ve maddeler doğrudan HTML'de yazılı.
+     3) Dışa aktarma: Chrome'da kareye sağ tık > "Görüntüyü farklı kaydet"
+        DEĞİL; en temizi: F12 (DevTools) > kareyi seç > sağ tık >
+        "Capture node screenshot". Ya da tüm ekranı 1:1 yakala.
+        Alternatif: Windows "Ekran Alıntısı Aracı" ile sadece kareyi kes.
+     ===================================================================== */
+
+  :root{
+    --navy:       #0E2A47;
+    --navy-700:   #0A2038;
+    --orange:     #F26A21;
+    --white:      #ffffff;
+    --ink:        #23272E;
+
+    /* DÜZENLE 1 — Ürün görseli (tırnak içindeki yolu değiştir) */
+    --urun-gorsel: url("../gorseller/Ekran%20g%C3%B6r%C3%BCnt%C3%BCs%C3%BC%202026-06-30%20093521.png");
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:#222; display:flex; justify-content:center; align-items:center;
+    min-height:100vh; font-family:"Montserrat","Segoe UI",Arial,sans-serif;
+  }
+
+  /* 1080x1080 kare. Ekrana sığması için 0.6 ölçek; export ederken
+     tarayıcı zoom'unu %100 yapıp tam çözünürlük yakalayabilirsin. */
+  .post{
+    position:relative; width:1080px; height:1080px; overflow:hidden;
+    background:var(--navy); color:var(--white);
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+
+  /* --- Ürün görseli (çerçeveyi doldurur) --- */
+  .post__photo{
+    position:absolute; inset:0;
+    background-image:var(--urun-gorsel);
+    background-size:cover; background-position:center;
+  }
+  /* Üstte ve altta lacivert degrade — yazılar okunsun diye */
+  .post__shade{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(14,42,71,.92) 0%, rgba(14,42,71,0) 26%),
+      linear-gradient(0deg,   rgba(10,32,56,.97) 0%, rgba(10,32,56,.55) 22%, rgba(10,32,56,0) 42%);
+  }
+
+  /* --- ÜST BAR: logo --- */
+  .top{
+    position:absolute; top:46px; left:0; right:0;
+    display:flex; flex-direction:column; align-items:center; z-index:3;
+  }
+  .logo{ font-size:74px; font-weight:800; letter-spacing:-1px; line-height:1; }
+  .logo .o{ color:var(--orange); }
+  .logo__sub{
+    margin-top:10px; font-size:20px; font-weight:600; letter-spacing:6px;
+    color:#cdd8e6; text-transform:uppercase;
+  }
+
+  /* --- ALT BLOK: başlık + maddeler + CTA --- */
+  .bottom{
+    position:absolute; left:0; right:0; bottom:0; z-index:3;
+    padding:0 64px 56px;
+  }
+  .badge{
+    display:inline-block; background:var(--orange); color:#fff;
+    font-size:22px; font-weight:700; letter-spacing:1px;
+    padding:10px 22px; border-radius:999px; margin-bottom:22px;
+    text-transform:uppercase;
+  }
+  .title{
+    font-size:76px; font-weight:800; line-height:1.05; letter-spacing:-1px;
+    text-shadow:0 4px 24px rgba(0,0,0,.45);
+  }
+  .title .hl{ color:var(--orange); }
+  .feats{
+    margin-top:26px; display:flex; flex-wrap:wrap; gap:14px 30px;
+  }
+  .feats li{
+    list-style:none; font-size:27px; font-weight:600; color:#eaf1f9;
+    display:flex; align-items:center; gap:12px;
+  }
+  .feats li::before{
+    content:"✓"; color:var(--orange); font-weight:900; font-size:28px;
+  }
+
+  /* --- İLETİŞİM ÇUBUĞU --- */
+  .cta{
+    margin-top:34px; display:flex; align-items:center; gap:18px;
+    background:var(--orange); border-radius:18px; padding:20px 30px;
+    width:fit-content;
+  }
+  .cta__ico{
+    width:54px; height:54px; border-radius:50%; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px;
+  }
+  .cta__txt b{ display:block; font-size:38px; font-weight:800; line-height:1; }
+  .cta__txt span{ font-size:20px; font-weight:600; letter-spacing:2px; text-transform:uppercase; opacity:.95; }
+</style>
+</head>
+<body>
+
+  <div class="post">
+    <div class="post__photo"></div>
+    <div class="post__shade"></div>
+
+    <!-- ÜST: LOGO (DÜZENLE: alt başlığı isteğe göre değiştir) -->
+    <header class="top">
+      <div class="logo">form<span class="o">mix</span></div>
+      <div class="logo__sub">Kurumsal İş Elbiseleri</div>
+    </header>
+
+    <!-- ALT: METİNLER -->
+    <div class="bottom">
+      <!-- DÜZENLE 2 — Rozet -->
+      <span class="badge">Min. 5 Adet</span>
+
+      <!-- DÜZENLE 3 — Başlık (vurgulanacak kelimeyi <span class="hl"> ile sar) -->
+      <h1 class="title">Ekibiniz <span class="hl">markanızı</span><br>temsil etsin.</h1>
+
+      <!-- DÜZENLE 4 — Maddeler -->
+      <ul class="feats">
+        <li>Logonuza özel DTF baskı</li>
+        <li>20 renk seçeneği</li>
+        <li>Ücretsiz tasarım</li>
+        <li>Hızlı teslimat</li>
+      </ul>
+
+      <!-- İLETİŞİM (sabit) -->
+      <div class="cta">
+        <div class="cta__ico">📲</div>
+        <div class="cta__txt">
+          <b>0539 487 31 90</b>
+          <span>Teklif Al · WhatsApp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
