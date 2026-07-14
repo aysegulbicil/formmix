@@ -37,6 +37,12 @@
                     Müşteriler
                 </a>
             <?php endif; ?>
+            <?php if ($currentUser?->can('products.view')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'products' ? 'is-active' : '' ?>" href="<?= site_url('panel/urunler') ?>">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8.5 12 3 3 8.5V19h18V8.5ZM12 5.35l5.83 3.56L12 12.47 6.17 8.91 12 5.35ZM5 10.69l6 3.67v5.14H5v-8.81Zm8 8.81v-5.14l6-3.67v8.81h-6Z"/></svg>
+                    Ürünler
+                </a>
+            <?php endif; ?>
         </nav>
 
         <div class="sidebar__user">

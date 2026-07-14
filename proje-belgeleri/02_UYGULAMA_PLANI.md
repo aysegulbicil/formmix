@@ -1,8 +1,8 @@
 # Adım Adım Uygulama Planı
 
 **Son güncelleme:** 14 Temmuz 2026  
-**Şu anki adım:** Adım 2 — Müşteri ve personel yönetimi  
-**Genel durum:** Adım 0 ve Adım 1 tamamlandı; Adım 2 başlatıldı
+**Şu anki adım:** Adım 3 tamamlandı — Ürün, seçenek ve fiyat yönetimi
+**Genel durum:** Adım 0, Adım 1, Adım 2 ve Adım 3 tamamlandı; Adım 4 henüz başlatılmadı
 
 ## Bu dosya nasıl kullanılacak?
 
@@ -134,22 +134,35 @@ Giriş, yetki, kayıt geçmişi ve yedek geri yükleme testleri başarılı olma
 
 ## Adım 3 — Ürün, seçenek ve fiyat yönetimi
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`
 **Amaç:** Siparişin doğru ürün ve fiyatla girilebilmesini sağlamak.
 
 ### Yapılacaklar
 
-- [ ] Mevcut ürünler veritabanına taşınacak.
-- [ ] Ürün kodu, beden, renk ve diğer seçenekler tanımlanacak.
-- [ ] Alış ve satış fiyatları tanımlanacak.
-- [ ] Müşteri grupları ve özel fiyatlar tanımlanacak.
-- [ ] İndirim sınırları tanımlanacak.
-- [ ] Ürünü satışa açma ve kapatma yapılacak.
-- [ ] Toplu fiyat güncelleme yöntemi hazırlanacak.
+- [x] Kurumsal sitedeki altı mevcut ürün veritabanına taşındı; katalogda doğrulanan polo yaka için S-4XL ve 18 rengin 126 ayrı varyantı oluşturuldu.
+- [x] Ürün kodu, kategori, beden, renk, diğer seçenekler ve ayrı varyant stok kodu yapısı kuruldu.
+- [x] Vergi hariç alış ve liste satış fiyatı, varyant fiyatı, vergi oranı ve kritik stok alanları tanımlandı.
+- [x] Müşteri fiyat grupları ile müşteri veya gruba, istenirse varyanta özel tarihli fiyat yapısı ve ekranları hazırlandı.
+- [x] Personel indirim sınırlarıyla uyumlu liste fiyatı temeli korundu; grup indiriminin personelin sipariş onay sınırını artırmadığı ekranda açıklandı.
+- [x] Ürünü satışa açma ve kapatma yapıldı. Gerçek fiyatı henüz girilmemiş katalog ürünleri yanlışlıkla siparişte kullanılmaması için pasif tutuldu.
+- [x] Seçili ürünlere yüzde artış veya azalış uygulayan, her fiyat değişikliğini işlem geçmişine yazan toplu güncelleme hazırlandı.
 
 ### Tamamlanmış sayılması için
 
 Personel sadece satışa açık ürünleri ve kendisine izin verilen fiyatları görmeli; yetkisini aşan indirimi onaysız uygulayamamalıdır.
+
+### Adım sonu kaydı
+
+- Tamamlanma tarihi: 14 Temmuz 2026
+- Mevcut ürün kaynağı ve FORMMIX kataloğu incelendi; belgede bulunmayan beden, renk ve gerçek işletme fiyatları uydurulmadı.
+- Ürün, kategori, varyant, müşteri fiyat grubu, grup üyeliği ve müşteri/grup özel fiyat tabloları oluşturuldu.
+- Baskısız ve müşteriye özel hazırlanmış ürünler ayrı hazırlama durumu, müşteri bağlantısı ve gerektiğinde ayrı stok koduyla tutulabilecek şekilde tasarlandı.
+- İşletme sahibi bütün ürün ve fiyat işlemlerini yapabilir. Satış yöneticisi alış fiyatını görmeden ürün ve satış fiyatını yönetebilir. Muhasebe alış fiyatını görür fakat ürün değiştiremez. Saha ve depo yalnızca satış fiyatını görür.
+- Ürün oluşturma, düzenleme, aktiflik, toplu fiyat, fiyat grubu ve özel fiyat değişiklikleri işlem geçmişine bağlandı.
+- Yapılan testler: PHP söz dizimi, rota listesi, `git diff --check`, SQLite migrationı, Docker MySQL migrationı, altı katalog ürünü ve 126 polo varyantı doğrulaması, beş görev için izin/ret testi, gerçek CSRF korumalı ürün ve varyant kaydı, 1280 px masaüstü ve 390x844 telefon görünümü, yatay taşma, tarayıcı konsolu ve kurumsal ürün sayfası gerileme kontrolü.
+- Geçici test ürünü ve işlem geçmişi test sonunda temizlendi; mevcut işletme kayıtları korundu.
+- Açık konu: Gerçek alış ve liste satış tutarları işletme tarafından girilecek. Tutarı bilinmeyen katalog ürünleri bu nedenle pasif ve "Fiyat bekliyor" durumundadır.
+- Sonraki adım: Adım 4 — Saha ziyareti. Bu çalışma kapsamında Adım 4'e geçilmedi.
 
 ---
 

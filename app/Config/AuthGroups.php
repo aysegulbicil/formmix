@@ -83,6 +83,7 @@ class AuthGroups extends ShieldAuthGroups
         'customers.assign'          => 'Müşteriyi personele atama',
         'visits.manage-own'         => 'Kendi ziyaretlerini yönetme',
         'visits.view-all'           => 'Bütün ziyaretleri görme',
+        'products.view'             => 'Ürünleri ve satış fiyatlarını görme',
         'products.manage'           => 'Ürün ve satış fiyatlarını yönetme',
         'products.view-cost'        => 'Alış fiyatını görme',
         'orders.create'             => 'Teklif ve sipariş oluşturma',
@@ -116,19 +117,20 @@ class AuthGroups extends ShieldAuthGroups
         ],
         'sales_manager' => [
             'panel.access', 'employees.*', 'customers.*', 'visits.*', 'orders.create',
-            'orders.view-all', 'orders.approve', 'commissions.view-all', 'reports.view',
+            'orders.view-all', 'orders.approve', 'products.view', 'products.manage',
+            'commissions.view-all', 'reports.view',
         ],
         'field_sales' => [
             'panel.access', 'customers.view-own', 'customers.create',
-            'visits.manage-own', 'orders.create', 'collections.notify', 'commissions.view-own',
+            'visits.manage-own', 'products.view', 'orders.create', 'collections.notify', 'commissions.view-own',
         ],
         'accounting' => [
             'panel.access', 'customers.view-all', 'customers.create', 'orders.view-all',
-            'products.view-cost', 'purchases.manage', 'finance.manage',
+            'products.view', 'products.view-cost', 'purchases.manage', 'finance.manage',
             'commissions.view-all', 'reports.view',
         ],
         'warehouse' => [
-            'panel.access', 'orders.view-all', 'orders.fulfill', 'purchases.manage', 'stock.manage',
+            'panel.access', 'products.view', 'orders.view-all', 'orders.fulfill', 'purchases.manage', 'stock.manage',
         ],
     ];
 }

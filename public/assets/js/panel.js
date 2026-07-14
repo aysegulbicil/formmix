@@ -49,4 +49,13 @@
             duplicateTimer = setTimeout(checkDuplicate, 450);
         });
     });
+
+    const checkAll = document.querySelector('[data-check-all]');
+    const checkItems = [...document.querySelectorAll('[data-check-item]')];
+    checkAll?.addEventListener('change', () => checkItems.forEach(item => { item.checked = checkAll.checked; }));
+    checkItems.forEach(item => item.addEventListener('change', () => {
+        if (!checkAll) return;
+        checkAll.checked = checkItems.length > 0 && checkItems.every(box => box.checked);
+        checkAll.indeterminate = !checkAll.checked && checkItems.some(box => box.checked);
+    }));
 })();

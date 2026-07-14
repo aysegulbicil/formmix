@@ -22,24 +22,24 @@ class VerifyPermissions extends BaseCommand
     {
         $cases = [
             'owner' => [
-                'allow' => ['panel.access', 'users.manage', 'employees.view', 'employees.manage', 'orders.approve-high', 'finance.manage'],
+                'allow' => ['panel.access', 'users.manage', 'employees.view', 'employees.manage', 'products.view', 'products.manage', 'products.view-cost', 'orders.approve-high', 'finance.manage'],
                 'deny'  => [],
             ],
             'sales_manager' => [
-                'allow' => ['panel.access', 'employees.view', 'employees.manage', 'customers.assign', 'orders.approve', 'reports.view'],
-                'deny'  => ['finance.manage', 'orders.approve-high'],
+                'allow' => ['panel.access', 'employees.view', 'employees.manage', 'customers.assign', 'products.view', 'products.manage', 'orders.approve', 'reports.view'],
+                'deny'  => ['products.view-cost', 'finance.manage', 'orders.approve-high'],
             ],
             'field_sales' => [
-                'allow' => ['panel.access', 'customers.view-own', 'orders.create', 'collections.notify'],
-                'deny'  => ['employees.view', 'employees.manage', 'customers.view-all', 'orders.approve', 'finance.manage'],
+                'allow' => ['panel.access', 'customers.view-own', 'products.view', 'orders.create', 'collections.notify'],
+                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'customers.view-all', 'orders.approve', 'finance.manage'],
             ],
             'accounting' => [
-                'allow' => ['panel.access', 'finance.manage', 'products.view-cost', 'commissions.view-all'],
-                'deny'  => ['employees.manage', 'orders.approve', 'customers.assign', 'users.manage'],
+                'allow' => ['panel.access', 'finance.manage', 'products.view', 'products.view-cost', 'commissions.view-all'],
+                'deny'  => ['products.manage', 'employees.manage', 'orders.approve', 'customers.assign', 'users.manage'],
             ],
             'warehouse' => [
-                'allow' => ['panel.access', 'stock.manage', 'orders.fulfill', 'purchases.manage'],
-                'deny'  => ['employees.view', 'employees.manage', 'finance.manage', 'customers.create', 'commissions.view-all'],
+                'allow' => ['panel.access', 'products.view', 'stock.manage', 'orders.fulfill', 'purchases.manage'],
+                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'finance.manage', 'customers.create', 'commissions.view-all'],
             ],
         ];
 
