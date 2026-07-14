@@ -35,5 +35,5 @@ class Autoload extends AutoloadConfig
      * - form: form acma/kapama, old() ile form degerlerini koruma
      * - site: WhatsApp/telefon linki, icerik (site_data), asset(), nav_active()
      */
-    public $helpers = ['url', 'form', 'site'];
+    public $helpers = ['url', 'form', 'site', 'auth', 'setting'];
 }

@@ -1,0 +1,64 @@
+name: formmix
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: formmix
+      MYSQL_USER: formmix
+      MYSQL_PASSWORD: formmix_local_password
+      MYSQL_ROOT_PASSWORD: formmix_local_root_password
+      TZ: Europe/Istanbul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - formmix_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      app.baseURL: "http://localhost:${FORMMIX_PORT:-8082}/"
+      email.protocol: smtp
+      email.SMTPHost: mailpit
+      email.SMTPPort: 1025
+      email.SMTPTimeout: 5
+      email.SMTPCrypto: none
+      email.fromEmail: no-reply@formmix.local
+      email.fromName: FORMMIX
+      email.mailType: html
+    ports:
+      - "${FORMMIX_PORT:-8082}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    volumes:
+      - formmix_writable:/var/www/html/writable
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1/') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "${FORMMIX_MAIL_PORT:-8025}:8025"
+
+volumes:
+  formmix_mysql_data:
+  formmix_writable:

@@ -73,6 +73,26 @@ class Database extends Config
     //        ],
     //    ];
 
+    /**
+     * Yerel geliştirme veritabanı. Canlı ortam MySQL kullanmaya devam eder.
+     */
+    public array $development = [
+        'database'    => WRITEPATH . 'formmix.sqlite',
+        'DBDriver'    => 'SQLite3',
+        'DBPrefix'    => '',
+        'DBDebug'     => true,
+        'swapPre'     => '',
+        'failover'    => [],
+        'foreignKeys' => true,
+        'busyTimeout' => 1000,
+        'synchronous' => null,
+        'dateFormat'  => [
+            'date'     => 'Y-m-d',
+            'datetime' => 'Y-m-d H:i:s',
+            'time'     => 'H:i:s',
+        ],
+    ];
+
     //    /**
     //     * Sample database connection for Postgre.
     //     *
@@ -199,6 +219,8 @@ class Database extends Config
         // we don't overwrite live data on accident.
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
+        } elseif (ENVIRONMENT === 'development') {
+            $this->defaultGroup = 'development';
         }
     }
 }

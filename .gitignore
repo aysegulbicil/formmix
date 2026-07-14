@@ -5,7 +5,13 @@
 /writable/session/*
 /writable/uploads/*
 /writable/debugbar/*
+/writable/*.sqlite
+/writable/.token_seed*
+/writable/buildx/
 !/writable/**/index.html
+
+# Yerel veritabanı yedekleri
+/backups/
 
 # Ortam
 .env

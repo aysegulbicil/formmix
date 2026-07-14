@@ -39,6 +39,7 @@ $selected = old('product');
             <?php endif; ?>
 
             <form action="<?= site_url('iletisim') ?>" method="post" novalidate>
+                <?= csrf_field() ?>
                 <!-- Bal küpü (spam koruması) — kullanıcı görmez -->
                 <div style="position:absolute; left:-9999px;" aria-hidden="true">
                     <label>Web siteniz <input type="text" name="website" tabindex="-1" autocomplete="off"></label>

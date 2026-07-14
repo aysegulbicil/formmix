@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.docker
+vendor
+writable/*
+!writable/**/index.html
+FORMMIX_Katalog.pdf
+instagram
+*.log
+*.sqlite
+.idea
+.vscode
+Dockerfile*
+compose*.yaml
+DOCKER.md
