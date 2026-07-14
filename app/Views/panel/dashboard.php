@@ -22,9 +22,9 @@
             <div><h3>Personel yönetimi</h3><p>Ekibi, yetkileri ve kullanıcı bağlantılarını yönetin.</p></div><span class="action-card__arrow">→</span>
         </a>
     <?php endif; ?>
-    <div class="action-card action-card--muted">
+    <?php if ($user?->can('customers.view-all') || $user?->can('customers.view-own')): ?><a class="action-card" href="<?= site_url('panel/musteriler') ?>">
         <span class="action-card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg></span>
-        <div><h3>Müşteri yönetimi</h3><p>Personel modülünden sonra kullanıma açılacak.</p></div><span class="badge badge--neutral">Yakında</span>
-    </div>
+        <div><h3>Müşteri yönetimi</h3><p>Portföyü, sorumluları ve görüşmeleri yönetin.</p></div><span class="action-card__arrow">→</span>
+    </a><?php endif; ?>
 </div>
 <?= $this->endSection() ?>

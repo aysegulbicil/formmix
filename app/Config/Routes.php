@@ -28,4 +28,16 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
         $routes->post('(:num)/duzenle', 'Panel\\Employees::update/$1', ['filter' => 'permission:employees.manage']);
         $routes->post('(:num)/durum', 'Panel\\Employees::toggleStatus/$1', ['filter' => 'permission:employees.manage']);
     });
+
+    $routes->group('musteriler', static function ($routes): void {
+        $routes->get('/', 'Panel\\Customers::index');
+        $routes->get('yeni', 'Panel\\Customers::create', ['filter' => 'permission:customers.create']);
+        $routes->get('tekrar-kontrol', 'Panel\\Customers::duplicateCheck', ['filter' => 'permission:customers.create']);
+        $routes->post('yeni', 'Panel\\Customers::store', ['filter' => 'permission:customers.create']);
+        $routes->get('(:num)', 'Panel\\Customers::show/$1');
+        $routes->get('(:num)/duzenle', 'Panel\\Customers::edit/$1', ['filter' => 'permission:customers.create']);
+        $routes->post('(:num)/duzenle', 'Panel\\Customers::update/$1', ['filter' => 'permission:customers.create']);
+        $routes->post('(:num)/sorumlu', 'Panel\\Customers::assign/$1', ['filter' => 'permission:customers.assign']);
+        $routes->post('(:num)/gorusme', 'Panel\\Customers::addActivity/$1');
+    });
 });

@@ -52,7 +52,7 @@ Her adım bittiğinde aşağıdakiler bu dosyaya yazılır:
 
 ## Adım 1 — Teknik temel ve güvenlik
 
-**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`  
+**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`
 **Amaç:** Sonraki bütün bölümlerin üzerine kurulacağı güvenli temeli hazırlamak.
 
 ### Yapılacaklar
@@ -88,20 +88,21 @@ Giriş, yetki, kayıt geçmişi ve yedek geri yükleme testleri başarılı olma
 
 ## Adım 2 — Müşteri ve personel yönetimi
 
-**Durum:** `[~] Devam ediyor — personel yönetimi tamamlandı`  
+**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`
+
 **Amaç:** Kimin hangi müşteriyle ilgilendiğini güvenilir biçimde takip etmek.
 
 ### Yapılacaklar
 
 - [x] Müşteri, yetkili kişi, güncel sorumlu, atama geçmişi ve görüşme kayıtlarının veritabanı yapısı oluşturuldu; MySQL ve SQLite üzerinde kuruldu, geçici kayıtlarla doğrulandı.
 - [x] Personel listeleme, arama, ekleme, düzenleme ve etkin/pasif yönetimi yapıldı; kullanıcı hesabı/görev bağlantısı, indirim sınırı, tahsilat bildirimi yetkisi, işlem geçmişi ve telefon uyumlu arayüz doğrulandı.
-- [ ] Müşteri ekleme ve düzenleme ekranı yapılacak.
-- [ ] Telefon ve vergi numarasıyla benzer müşteri uyarısı yapılacak.
-- [ ] Müşteri-personel ataması yapılacak.
-- [ ] Atama başlangıç ve bitiş tarihleri tutulacak.
-- [ ] Görüşme notları ve yapılacak işler kaydedilecek.
-- [ ] Müşteri arama ve süzme ekranı yapılacak.
-- [ ] Mevcut iletişim formu taleplerinin müşteri adayına dönüşmesi planlanacak.
+- [x] Müşteri ekleme, ayrıntı ve düzenleme ekranları yapıldı.
+- [x] Telefon ve vergi numarasıyla anlık benzer müşteri uyarısı ve sunucu tarafı mükerrer kayıt engeli yapıldı.
+- [x] Müşteri-personel ataması ve gerekçeli devir işlemi yapıldı.
+- [x] Atama başlangıç ve bitiş tarihleri geçmiş kaydı olarak tutuldu.
+- [x] Görüşme notları, görüşme türü ve sonraki işlem tarihi kaydedildi.
+- [x] Müşteri arama; durum ve sorumlu personele göre süzme ekranı yapıldı.
+- [x] İletişim formu taleplerinin otomatik müşteri oluşturmaması; ayrı aday havuzunda yönetici tarafından il, ilçe ve yetkili bilgileri tamamlandıktan sonra müşteriye dönüştürülmesi planlandı.
 
 ### Tamamlanmış sayılması için
 
@@ -116,6 +117,18 @@ Giriş, yetki, kayıt geçmişi ve yedek geri yükleme testleri başarılı olma
 - Oluşturma, güncelleme ve durum değişiklikleri işlem geçmişine kaydediliyor.
 - PHP sözdizimi, rota, beş görev için izin/ret, müşteri-personel veri temeli, CSRF korumalı gerçek personel kaydı ve 390×844 telefon görünümü testleri başarılı.
 - Sonraki bölüm: müşteri ekleme, düzenleme ve mükerrer kayıt uyarıları.
+
+### Adım sonu kaydı
+
+- Tamamlanma tarihi: 14 Temmuz 2026
+- Personel yönetimi; kullanıcı/görev bağlantısı, satış sınırları, aktiflik ve işlem geçmişiyle tamamlandı.
+- Müşteri yönetimi; kayıt, düzenleme, arama, süzme, mükerrer uyarı, sorumlu atama, gerekçeli devir, atama geçmişi ve görüşme takibiyle tamamlandı.
+- Saha personelinin yalnızca kendi müşterilerini görmesi; yönetici, satış yöneticisi ve muhasebenin görev matrisine göre tüm müşterileri görebilmesi uygulandı.
+- Oluşturma, düzenleme, atama/devir ve görüşme işlemleri işlem geçmişine bağlandı.
+- Yapılan testler: PHP sözdizimi, rota listesi, beş görev için izin/ret, MySQL müşteri veri ilişkileri, gerçek CSRF korumalı müşteri kaydı, mükerrer telefon uyarısı, görüşme kaydı, sorumlu devri ve 390×844 telefon görünümü.
+- Test kayıtları doğrulama sonunda temizlendi; mevcut işletme kayıtları korundu.
+- Açık konu: İletişim talepleri için ayrı aday havuzu, iletişim formunun veritabanına alınacağı sonraki uygun geliştirmede uygulanacak; dönüşüm kuralı bu adımda belirlendi.
+- Sonraki adım: Adım 3 — Ürün, seçenek ve fiyat yönetimi.
 
 ---
 

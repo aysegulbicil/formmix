@@ -31,10 +31,12 @@
                     Personel
                 </a>
             <?php endif; ?>
-            <div class="nav-item is-disabled" aria-disabled="true">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg>
-                Müşteriler <small>Yakında</small>
-            </div>
+            <?php if ($currentUser?->can('customers.view-all') || $currentUser?->can('customers.view-own')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'customers' ? 'is-active' : '' ?>" href="<?= site_url('panel/musteriler') ?>">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg>
+                    Müşteriler
+                </a>
+            <?php endif; ?>
         </nav>
 
         <div class="sidebar__user">

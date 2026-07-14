@@ -19,4 +19,22 @@ class CustomerModel extends Model
         'status', 'payment_term_days', 'credit_limit', 'current_owner_employee_id', 'created_by_user_id',
         'last_activity_at',
     ];
+
+    protected $validationRules = [
+        'customer_code'    => 'required|max_length[30]|is_unique[customers.customer_code,id,{id}]',
+        'company_name'     => 'required|min_length[2]|max_length[180]',
+        'email'            => 'permit_empty|valid_email|max_length[190]',
+        'city'             => 'required|max_length[100]',
+        'district'         => 'required|max_length[100]',
+        'payment_term_days'=> 'required|integer|greater_than_equal_to[0]|less_than_equal_to[365]',
+        'credit_limit'     => 'permit_empty|decimal|greater_than_equal_to[0]',
+    ];
+
+    protected $validationMessages = [
+        'company_name' => ['required' => 'Firma adı zorunludur.', 'min_length' => 'Firma adı en az 2 karakter olmalıdır.'],
+        'email' => ['valid_email' => 'Geçerli bir e-posta adresi yazın.'],
+        'city' => ['required' => 'İl zorunludur.'],
+        'district' => ['required' => 'İlçe zorunludur.'],
+        'payment_term_days' => ['required' => 'Vade günü zorunludur.', 'integer' => 'Vade günü tam sayı olmalıdır.'],
+    ];
 }

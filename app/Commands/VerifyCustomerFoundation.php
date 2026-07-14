@@ -44,6 +44,7 @@ class VerifyCustomerFoundation extends BaseCommand
                 'city' => 'İstanbul',
                 'district' => 'Kadıköy',
                 'status' => 'candidate',
+                'payment_term_days' => 30,
                 'current_owner_employee_id' => $employeeId,
             ], true);
 
