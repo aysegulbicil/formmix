@@ -49,7 +49,7 @@
                         <td data-label="Satış yetkisi"><strong>%<?= esc(rtrim(rtrim(number_format((float) $item['max_discount_percent'], 2, ',', '.'), '0'), ',')) ?></strong><small class="cell-note"><?= $item['can_collect_payment'] ? 'Tahsilat bildirimi açık' : 'Tahsilat bildirimi kapalı' ?></small></td>
                         <td data-label="Hesap"><?php if ($item['account_email']): ?><span class="account-state account-state--linked"><i></i> Bağlı</span><small class="cell-note"><?= esc($item['account_email']) ?></small><?php else: ?><span class="account-state"><i></i> Bağlı değil</span><?php endif; ?></td>
                         <td data-label="Durum"><span class="badge <?= $item['is_active'] ? 'badge--success' : 'badge--neutral' ?>"><?= $item['is_active'] ? 'Aktif' : 'Pasif' ?></span></td>
-                        <td class="row-actions">
+                        <td class="row-actions" data-label="İşlem">
                             <?php if (auth()->user()?->can('employees.manage')): ?>
                                 <a class="icon-button" href="<?= site_url('panel/personel/' . $item['id'] . '/duzenle') ?>" aria-label="<?= esc($item['full_name']) ?> kaydını düzenle" title="Düzenle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17.25-.03 3.78 3.78-.03L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg></a>
                             <?php endif; ?>

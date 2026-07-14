@@ -1,8 +1,8 @@
 # Adım Adım Uygulama Planı
 
 **Son güncelleme:** 14 Temmuz 2026  
-**Şu anki adım:** Adım 3 tamamlandı — Ürün, seçenek ve fiyat yönetimi
-**Genel durum:** Adım 0, Adım 1, Adım 2 ve Adım 3 tamamlandı; Adım 4 henüz başlatılmadı
+**Şu anki adım:** Adım 10 hazırlığı tamamlandı — manuel kabul testi bekliyor
+**Genel durum:** Adım 7 kullanıcı kararıyla atlandı; canlı veri aktarımı ve yayına alma kullanıcı onayına kadar yapılmayacak
 
 ## Bu dosya nasıl kullanılacak?
 
@@ -162,14 +162,16 @@ Personel sadece satışa açık ürünleri ve kendisine izin verilen fiyatları 
 - Yapılan testler: PHP söz dizimi, rota listesi, `git diff --check`, SQLite migrationı, Docker MySQL migrationı, altı katalog ürünü ve 126 polo varyantı doğrulaması, beş görev için izin/ret testi, gerçek CSRF korumalı ürün ve varyant kaydı, 1280 px masaüstü ve 390x844 telefon görünümü, yatay taşma, tarayıcı konsolu ve kurumsal ürün sayfası gerileme kontrolü.
 - Geçici test ürünü ve işlem geçmişi test sonunda temizlendi; mevcut işletme kayıtları korundu.
 - Açık konu: Gerçek alış ve liste satış tutarları işletme tarafından girilecek. Tutarı bilinmeyen katalog ürünleri bu nedenle pasif ve "Fiyat bekliyor" durumundadır.
-- Sonraki adım: Adım 4 — Saha ziyareti. Bu çalışma kapsamında Adım 4'e geçilmedi.
+- Sonraki çalışma: Adım 5 — Teklif ve sipariş. Adım 4 fiziksel ziyaret ihtiyacı bulunmadığı için işletme kararıyla ertelendi.
 
 ---
 
 ## Adım 4 — Saha ziyareti
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[-] Ertelendi — şu an gerekli değil`
 **Amaç:** Kapı kapı çalışan personelin günlük çalışmalarını kolayca kaydetmek.
+
+**Erteleme notu:** Fiziksel müşteri ziyareti ve konum kaydı işletme kararıyla ilk sürümde şimdilik ertelendi. Herhangi bir ziyaret migrationı, tablosu, konum kaydı veya ziyaret ekranı geliştirilmedi. Mevcut müşteri görüşme/not ve sonraki işlem tarihi yapısı kullanılacaktır; ihtiyaç oluşursa bu bölüm ayrıca yeniden değerlendirilecektir.
 
 ### Yapılacaklar
 
@@ -190,51 +192,74 @@ Gerçek bir telefonla müşteri bulma, ziyaret kaydetme ve bağlantı kesintisi 
 
 ## Adım 5 — Teklif ve sipariş
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[x] Başlangıç kapsamı tamamlandı — 14 Temmuz 2026`
 **Amaç:** Saha personelinin telefondan sipariş girmesi ve merkezin anında görmesi.
 
 ### Yapılacaklar
 
-- [ ] Teklif oluşturma ve teklifi siparişe çevirme yapılacak.
-- [ ] Ürün, seçenek, adet, fiyat ve indirim girişi yapılacak.
-- [ ] Sipariş toplamları sistem tarafından hesaplanacak.
-- [ ] Yetki dışı indirim yönetici onayına gönderilecek.
-- [ ] Sipariş durumu geçmişi tutulacak.
-- [ ] Siparişe belge veya görsel eklenebilecek.
-- [ ] Merkez ekranında yeni sipariş bildirimi gösterilecek.
-- [ ] İptal ve iade işlemleri kaydedilecek.
-- [ ] Aynı siparişin bağlantı sorunu nedeniyle iki kez oluşması önlenecek.
+- [x] Teklif oluşturma ve onaylı teklifi bağlantısını koruyarak yeni siparişe çevirme yapıldı.
+- [x] Satışa açık ürün, varyant, adet ve indirim girişi; sunucudan fiyat çözümleme yapıldı.
+- [x] Vergi hariç ara toplam, indirim, vergi ve genel toplam sunucuda yeniden hesaplanıyor.
+- [x] Personel indirim sınırı ve yüzde 15 üzeri işletme sahibi onayı uygulandı.
+- [x] Taslak, onay bekliyor, onaylandı ve iptal edildi durumları gerekçeli geçmişle tutuluyor.
+- [!] Siparişe belge veya görsel ekleme için izin verilen dosya türleri, dosya boyutu ve saklama süresi işletmeden bekleniyor; başlangıç sipariş akışına dahil edilmedi.
+- [x] Onay bekleyen sipariş sayısı merkez genel bakış ekranında gösteriliyor; yeni kayıt listede anında görünüyor.
+- [x] Gerekçeli iptal kaydı yapıldı. İade, teslimat ve stok etkisi nedeniyle depo/sevkiyat adımında ele alınacak.
+- [x] Cihaz taslağı benzersiz `client_reference` ile saklanıyor; aynı kayıt ikinci kez oluşturulmuyor ve gönderimde düğmeler kilitleniyor.
 
 ### Tamamlanmış sayılması için
 
 Sahadaki telefondan girilen örnek sipariş merkezde doğru müşteri, personel, ürün, fiyat ve toplamla birkaç saniye içinde görünmelidir.
 
+### Adım sonu kaydı
+
+- Tamamlanma tarihi: 14 Temmuz 2026
+- Teklif ve siparişler aynı ana tabloda belge türüyle ayrıldı; tekliften sipariş üretildiğinde kaynak teklif bağlantısı korunuyor.
+- Müşteri sorumlusu, satışın ait olduğu personel ve kaydı oluşturan kullanıcı belge anında ayrı alanlarda saklanıyor.
+- Ürün adı, ürün kodu, varyant, birim fiyat ve vergi oranı satırda anlık kopya olarak tutuluyor; sonraki ürün fiyatı değişiklikleri eski belgeyi değiştirmiyor.
+- Müşteri/varyant ve fiyat grubu önceliklerini tarih aralığıyla çözen fiyat servisi ile tek merkezli hesaplama servisi tamamlandı.
+- Saha personeli yalnızca kendi müşterisi ve belgeleriyle çalışıyor; muhasebe bütün satış belgelerini, depo yalnızca onaylı siparişleri görüyor.
+- Mobil taslak cihazda korunuyor; bağlantı geri geldiğinde aynı `client_reference` ile ikinci kayıt oluşmuyor.
+- Yapılan testler: PHP ve JavaScript söz dizimi, `git diff --check`, SQLite ve Docker MySQL migrationı, dört veri temeli doğrulama komutu, beş görev izin/ret matrisi, gerçek CSRF korumalı teklif ve sipariş kaydı, ürün/varyant seçimi, fiyat önceliği, indirim/vergi/toplam, yüzde 20 yüksek indirim onay kaydı, kendi belgesini onaylama reddi, başka personele ait müşteri reddi, tekliften siparişe dönüşüm, cihaz taslağını yeniden yükleme, 1280 px ve 390x844 görünüm, yatay taşma ve tarayıcı konsolu.
+- Geçici kullanıcı, müşteri, ürün, teklif, sipariş ve işlem kayıtları test sonunda temizlendi; mevcut işletme kayıtları korundu.
+- Açık işletme bilgileri: Gerçek ürün fiyatları; sipariş eki için dosya türü, boyut ve saklama süresi. Fiyatı bilinmeyen ürünler satışa kapalı kalır.
+- Alış, depo ve stok adımı kullanıcı onayıyla başlatıldı ve tamamlandı.
+
 ---
 
 ## Adım 6 — Alış, depo ve stok
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`
 **Amaç:** Alınan ve satılan ürünlerin miktarını ve neden hareket ettiğini izlemek.
 
 ### Yapılacaklar
 
-- [ ] Tedarikçi kayıtları yapılacak.
-- [ ] Alış siparişi ve mal kabul ekranları yapılacak.
-- [ ] Depo tanımları yapılacak.
-- [ ] Stok giriş, çıkış, transfer, iade ve düzeltme işlemleri yapılacak.
-- [ ] Satış siparişine ürün ayırma yapılacak.
-- [ ] Kritik stok uyarıları yapılacak.
-- [ ] Stok sayımı ve fark kaydı yapılacak.
+- [x] Tedarikçi kayıtları yapıldı.
+- [x] Alış siparişi ve kısmi/tam mal kabul ekranları yapıldı.
+- [x] Ana depo tohumu ve çoklu depo tanımları yapıldı.
+- [x] Stok giriş, çıkış, transfer, iade ve gerekçeli düzeltme işlemleri yapıldı.
+- [x] Satış siparişine kısmi/tam ürün ayırma, tedarik bekleme ve sevkiyat yapıldı.
+- [x] Ürün/varyant eşiğine göre kritik stok uyarıları yapıldı.
+- [x] Stok sayımı ve fark hareketi kaydı yapıldı.
 
 ### Tamamlanmış sayılması için
 
 Her stok değişiminin miktarı, nedeni, tarihi ve işlemi yapan kişi görülebilmelidir. Örnek alış, satış, iade ve sayım sonunda kalan miktar doğru olmalıdır.
 
+### Adım sonu kaydı
+
+- Tamamlanma tarihi: 14 Temmuz 2026
+- Tek ana depoyla başlayan, çoklu depoya açık varyant bakiyesi kuruldu; mevcut, ayrılmış ve kullanılabilir miktarlar ayrı tutuluyor.
+- Eksi stok engellendi. Siparişte eksik ürün tedarik bekliyor; kısmi stok ayrılabiliyor ve kısmi sevkiyat geçmişi korunuyor.
+- Her stok hareketinde tür, miktar, hareket sonrası bakiye, neden, tarih, kullanıcı ve kaynak belge saklanıyor; hareketler silinmiyor.
+- `formmix:verify-inventory-foundation` senaryosu SQLite ve Docker MySQL üzerinde alış, iki aşamalı mal kabul, kısmi ayırma, sevkiyat, iade, eksi stok, sayım ve transferi doğruladı.
+- Sıradaki çalışma: Adım 7 — Cari hesap, tahsilat ve ödeme.
+
 ---
 
 ## Adım 7 — Cari hesap, tahsilat ve ödeme
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[-] Atlandı — kullanıcı kararıyla şu an gerekli değil`
 **Amaç:** Müşteri ve tedarikçi borçlarını temel seviyede takip etmek.
 
 ### Yapılacaklar
@@ -255,18 +280,20 @@ Her stok değişiminin miktarı, nedeni, tarihi ve işlemi yapan kişi görüleb
 
 ## Adım 8 — Prim sistemi
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[x] Başlangıç kapsamı tamamlandı — 14 Temmuz 2026`
 **Amaç:** Personelin hak ettiği primi açık, kontrol edilebilir ve itiraz durumunda açıklanabilir biçimde hesaplamak.
 
 ### Yapılacaklar
 
-- [ ] Prim kuralları tarih aralığıyla tanımlanacak.
-- [ ] Prim matrahının satış mı, kâr mı, tahsilat mı olduğu seçilebilecek.
-- [ ] Personel ve ürün grubuna göre oran tanımlanabilecek.
+- [x] Prim kuralları tarih aralığıyla tanımlanıyor.
+- [!] Satış ve kâr matrahı uygulanıyor; tahsilat matrahı Adım 7 atlandığı için bekliyor.
+- [x] Personel ve ürün grubuna göre oran tanımlanıyor.
 - [ ] İade ve iptal düzeltmeleri yapılacak.
 - [ ] Müşteriyi bulan ve siparişi alan farklıysa paylaşım uygulanacak.
-- [ ] Prim önce bekleyen, sonra hak edilmiş duruma geçecek.
-- [ ] Dönem kapatma ve ödeme kaydı yapılacak.
+- [x] Prim önce bekleyen, sevkiyat sonrası hak edilmiş duruma geçiyor.
+- [x] Dönem kapatma ve ödeme kaydı yapılıyor.
+
+Başlangıç kapsamında aynı belge/kural/personel için mükerrer prim engellendi ve hesap anlık kopyası saklandı. İade/iptal ters kaydı ile müşteri bulan-sipariş alan paylaşımı sonraki genişletmeye bırakıldı.
 
 ### Tamamlanmış sayılması için
 
@@ -276,20 +303,31 @@ En az on farklı örnek durum elle hesaplanacak; sistem sonucu ile elle hesaplan
 
 ## Adım 9 — Raporlar ve yönetim ana sayfası
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[x] Tamamlandı — 14 Temmuz 2026`
 **Amaç:** İşletmenin günlük durumunu tek bakışta göstermek.
 
 ### Yapılacaklar
 
-- [ ] Günlük, haftalık ve aylık satışlar gösterilecek.
-- [ ] Personel, müşteri ve ürün bazında satış raporu yapılacak.
-- [ ] Bekleyen sipariş ve geciken iş uyarıları yapılacak.
-- [ ] Stok ve kritik stok raporu yapılacak.
-- [ ] Tahsilat ve geciken ödeme raporu yapılacak.
-- [ ] Ziyaret ve müşteri kazanım raporu yapılacak.
-- [ ] Prim özeti yapılacak.
-- [ ] Temel kârlılık raporu yapılacak.
-- [ ] Raporların tablo dosyası olarak dışarı alınması sağlanacak.
+- [x] Günlük, haftalık ve aylık satışlar gösteriliyor.
+- [x] Personel, müşteri, ürün ve varyant bazında satış raporu yapıldı.
+- [x] Onay, tedarik ve kısmi sevkiyat bekleyen sipariş uyarıları yapıldı.
+- [x] Mevcut, ayrılmış, kullanılabilir ve kritik stok; depo bazında raporlandı.
+- [-] Tahsilat ve geciken ödeme raporu Adım 7 atlandığı için geliştirilmedi.
+- [-] Ziyaret raporu Adım 4 ertelendiği ve bu adımın onaylı kapsamına alınmadığı için geliştirilmedi.
+- [x] Bekleyen, hak edilmiş ve ödenmiş durumları içeren prim özeti yapıldı.
+- [x] Temel brüt kârlılık raporu yapıldı; maliyet ve kâr yalnızca `products.view-cost` izniyle gösteriliyor.
+- [x] Personel/tarih filtreleri ve aynı filtre/yetkileri koruyan CSV/XLSX dışa aktarımı yapıldı.
+- [x] Yönetim ana sayfasına aylık satış, onay bekleyen, kritik stok, tedarik ve kısmi sevk göstergeleri eklendi.
+
+### Ara doğrulama kaydı — 14 Temmuz 2026
+
+- Sunucu tarafı rapor servisi mevcut satış, satış satırı, stok bakiyesi, depo ve prim tabloları üzerinde çalışıyor; yeni migration gerekmedi.
+- `formmix:verify-report-foundation` geçici örnek verilerle net satış, personel filtresi, ürün maliyeti, brüt kâr, onay bekleyen sipariş, kritik stok, prim ve CSV/XLSX çıktılarını SQLite üzerinde doğruladı; işlem sonunda test verileri geri alındı.
+- `formmix:verify-permissions` yönetici/satış yöneticisi/muhasebe rapor erişimini ve saha/depo reddini; ayrıca maliyet yetkisini doğruladı.
+- PHP sözdizimi, rota listesi, SQLite migration ve `git diff --check` kontrolleri geçti.
+- Docker uygulaması güncel kodla yeniden oluşturuldu; uygulama, MySQL ve Mailpit servisleri sağlıklı duruma geldi. Migration, rapor hesaplama ve yetki komutları Docker MySQL üzerinde geçti.
+- Masaüstü, tablet ve telefon uyumu kullanıcı tarafından görsel olarak kontrol edilip başarılı bulundu.
+- Kullanıcı onayıyla Adım 9 tamamlandı; sıradaki çalışma Adım 10 — gerçek kullanıcı denemesi ve yayına alma olarak belirlendi.
 
 ### Tamamlanmış sayılması için
 
@@ -299,19 +337,33 @@ Rapor sonuçları örnek veritabanı kayıtlarıyla tek tek karşılaştırılma
 
 ## Adım 10 — Gerçek kullanıcı denemesi ve yayına alma
 
-**Durum:** `[ ] Başlanmadı`  
+**Durum:** `[~] Yayına hazırlık altyapısı tamamlandı — manuel test ve canlı onay bekliyor`
 **Amaç:** Sistemi bütün personele açmadan önce küçük bir grupla güvenli biçimde denemek.
 
 ### Yapılacaklar
 
-- [ ] Gerçeğe yakın deneme verileri hazırlanacak.
-- [ ] Bir yönetici, bir saha personeli, bir muhasebe ve bir depo kullanıcısıyla deneme yapılacak.
-- [ ] Kullanım sırasında yaşanan sorunlar kaydedilecek.
-- [ ] Kritik sorunlar giderilecek ve tekrar test edilecek.
-- [ ] Kullanıcılar için kısa kullanım anlatımları hazırlanacak.
-- [ ] Canlı veriler aktarılacak.
-- [ ] Son yedek ve geri dönüş planı hazırlanacak.
-- [ ] Sistem önce sınırlı kullanıcıya, sonra herkese açılacak.
+- [x] `KABUL-*` kodlu, gerçek kayıtlardan açıkça ayrılan ve güvenli komutla temizlenebilen müşteri, ürün/varyant, stok, tedarikçi, alış, sipariş ve prim deneme verileri oluşturuldu.
+- [ ] İşletme sahibi, satış yöneticisi, saha personeli, muhasebe ve depo kullanıcılarıyla manuel kabul testi yapılacak.
+- [x] Kullanım sırasında bulunan sorunların önem derecesi, açıklaması, çözümü ve tekrar testiyle saklanacağı ekran yapıldı.
+- [~] Kritik sorunların kapanmadan hazırlık durumunu engellemesi uygulandı; gerçek sorunlar manuel test sırasında giderilip tekrar test edilecek.
+- [x] Panel içinde görev bazlı kısa kullanım rehberi ve ayrıntılı proje rehberi hazırlandı.
+- [-] Canlı veri aktarımı kullanıcı kararıyla manuel testlerden sonraya bırakıldı; bu çalışmada yapılmadı.
+- [x] Son yedek ve geri dönüş için zorunlu kontrol kapıları ile uygulanacak plan hazırlandı; gerçek son yedek yayından hemen önce alınacak.
+- [-] Sınırlı kullanıcı ve genel yayın kullanıcı kararıyla sonraya bırakıldı; bu çalışmada yapılmadı.
+
+### Yayına hazırlık kaydı — 14 Temmuz 2026
+
+- Yalnızca `settings.manage` yetkili işletme sahibinin erişebildiği `/panel/yayina-hazirlik` ekranı eklendi.
+- Deneme hazırlığı, beş görev, üç cihaz, güvenlik, e-posta, yedek, geri dönüş, canlı ortam, eğitim, destek ve yazılı onayı kapsayan 18 kalıcı kontrol maddesi oluşturuldu.
+- Sorunlu ve kapsam dışı maddelerde açıklama; sorun kapatmada çözüm ve tekrar test notu zorunlu tutuldu. Yedek, geri dönüş, canlı ortam, kritik sorun ve yazılı onay kapsam dışı bırakılamaz.
+- Açık kritik/yüksek sorun, bekleyen/sorunlu madde veya geçmemiş zorunlu kapı varken ekran “hazır” durumuna geçmez.
+- Bütün panel kullanıcılarının görevine uygun içeriği gördüğü `/panel/kullanim-rehberi` ekranı eklendi.
+- `formmix:verify-release-readiness` tablo, görev/yetki, yazılabilir dizin, yedek betikleri, HTTPS canlı alan adı kuralı ve geçici yazma/geri alma işlemlerini doğruluyor; yayın işlemi yapmıyor.
+- SQLite ve Docker MySQL migration’ları, teknik ön kontrol, görev yetkileri, PHP lint, rotalar ve `git diff --check` doğrulandı.
+- `formmix:seed-acceptance-data` komutu Docker MySQL üzerinde çalıştırıldı; ikinci çalıştırmada mükerrer kayıt oluşturmadığı doğrulandı.
+- Deneme verileri: `KABUL-MUS-001`, `KABUL-URUN-001`, iki varyant, `KABUL-ALS-001` ve onaylı/onay bekleyen/tedarik bekleyen/kısmi sevk/sevk edilmiş beş sipariş.
+- Deneme verisi hazırlık maddesi otomatik olarak “Başarılı” yapıldı; kalan 17 manuel madde “Bekliyor” durumundadır.
+- Canlıya alma yapılmadı. Deneme verileri gerektiğinde yalnızca `formmix:cleanup-acceptance-data --confirm` komutuyla temizlenebilir.
 
 ### Tamamlanmış sayılması için
 

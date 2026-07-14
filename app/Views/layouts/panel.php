@@ -7,6 +7,10 @@
     <title><?= esc($title) ?></title>
     <link rel="icon" href="<?= base_url('assets/images/favicon.svg') ?>" type="image/svg+xml">
     <link rel="stylesheet" href="<?= base_url('assets/css/panel.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/panel-forms.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/panel-ui.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/product-admin.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/customer-admin.css') ?>">
 </head>
 <body>
 <?php $currentUser = auth()->user(); ?>
@@ -43,6 +47,28 @@
                     Ürünler
                 </a>
             <?php endif; ?>
+            <?php if ($currentUser?->can('orders.create') || $currentUser?->can('orders.view-all') || $currentUser?->can('orders.fulfill')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'orders' ? 'is-active' : '' ?>" href="<?= site_url('panel/siparisler') ?>">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2ZM1 2v2h2l3.6 7.59-1.35 2.45A2 2 0 0 0 7 17h12v-2H7.42a.25.25 0 0 1-.22-.37L8.1 13h7.45a2 2 0 0 0 1.75-1.03L20.88 5H5.21l-.94-2H1Zm16 16c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2Z"/></svg>
+                    Teklif ve siparişler
+                </a>
+            <?php endif; ?>
+            <?php if ($currentUser?->can('stock.manage')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'inventory' ? 'is-active' : '' ?>" href="<?= site_url('panel/stok') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 8h-3V4H3a2 2 0 0 0-2 2v11h2.18a3 3 0 0 0 5.64 0h6.36a3 3 0 0 0 5.64 0H23v-5l-3-4ZM6 18.5A1.5 1.5 0 1 1 6 15a1.5 1.5 0 0 1 0 3.5ZM15 15H8.82A3 3 0 0 0 3 15V6h12v9Zm3 3.5a1.5 1.5 0 1 1 0-3.5 1.5 1.5 0 0 1 0 3.5ZM17 12V9.5h2.5l1.5 2V12h-4Z"/></svg>Stok ve depo</a>
+            <?php endif; ?>
+            <?php if ($currentUser?->can('purchases.manage')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'purchases' ? 'is-active' : '' ?>" href="<?= site_url('panel/alislar') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-1 9h-5v5h-2v-5H6v-2h5V5h2v5h5v2Z"/></svg>Alışlar</a>
+            <?php endif; ?>
+            <?php if ($currentUser?->can('commissions.view-own') || $currentUser?->can('commissions.view-all') || $currentUser?->can('commissions.manage')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'commissions' ? 'is-active' : '' ?>" href="<?= site_url('panel/primler') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 9 8l-7 .6 5.3 4.6L5.8 20 12 16.5 18.2 20l-1.5-6.8L22 8.6 15 8l-3-7Z"/></svg>Primler</a>
+            <?php endif; ?>
+            <?php if ($currentUser?->can('reports.view')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'reports' ? 'is-active' : '' ?>" href="<?= site_url('panel/raporlar') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18v-2H5V3H3Zm4 13h3V9H7v7Zm5 0h3V5h-3v11Zm5 0h3v-4h-3v4Z"/></svg>Raporlar</a>
+            <?php endif; ?>
+            <?php if ($currentUser?->can('settings.manage')): ?>
+                <a class="nav-item <?= ($activeNav ?? '') === 'release-readiness' ? 'is-active' : '' ?>" href="<?= site_url('panel/yayina-hazirlik') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5.05 3.41 9.76 8 11 4.59-1.24 8-5.95 8-11V5l-8-3Zm-1 14-4-4 1.41-1.41L11 13.17l4.59-4.58L17 10l-6 6Z"/></svg>Yayına hazırlık</a>
+            <?php endif; ?>
+            <a class="nav-item <?= ($activeNav ?? '') === 'user-guide' ? 'is-active' : '' ?>" href="<?= site_url('panel/kullanim-rehberi') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4H3a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15h-9V6h9v13ZM10 19H3V6h7v13Z"/></svg>Kullanım rehberi</a>
         </nav>
 
         <div class="sidebar__user">
@@ -83,5 +109,6 @@
     </div>
 </div>
 <script src="<?= base_url('assets/js/panel.js') ?>" defer></script>
+<?= $this->renderSection('scripts') ?>
 </body>
 </html>

@@ -58,4 +58,9 @@
         checkAll.checked = checkItems.length > 0 && checkItems.every(box => box.checked);
         checkAll.indeterminate = !checkAll.checked && checkItems.some(box => box.checked);
     }));
+    const movementType = document.querySelector('[data-movement-type]');
+    const targetWarehouse = document.querySelector('[data-target-warehouse]');
+    const syncMovement = () => { if (targetWarehouse) targetWarehouse.hidden = movementType?.value !== 'transfer'; };
+    movementType?.addEventListener('change', syncMovement);
+    syncMovement();
 })();

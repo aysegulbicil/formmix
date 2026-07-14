@@ -18,6 +18,7 @@ class ProductVariantModel extends Model
         'critical_stock_level', 'is_active',
     ];
     protected $validationRules = [
+        'id' => 'permit_empty|is_natural_no_zero',
         'product_id' => 'required|integer',
         'sku' => 'required|max_length[80]|is_unique[product_variants.sku,id,{id}]',
         'preparation_type' => 'required|in_list[plain,customized]',

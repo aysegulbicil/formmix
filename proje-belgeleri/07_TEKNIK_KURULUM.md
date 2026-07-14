@@ -90,7 +90,7 @@ C:\xampp\php\php.exe -d extension=sqlite3 spark shield:user removegroup -e kulla
 ## Güvenlik kararları
 
 - Dışarıdan kullanıcı kaydı kapalıdır.
-- Şifre en az 12 karakterdir.
+- Şifre en az 6 karakterdir.
 - Panel hem giriş hem görev yetkisi ister.
 - Form gönderimleri güvenlik koduyla korunur.
 - Giriş sayfaları IP başına dakikada 10 istekle sınırlandırılır.
@@ -104,3 +104,37 @@ C:\xampp\php\php.exe -d extension=sqlite3 spark shield:user removegroup -e kulla
 - Günlük otomatik yedek
 - Gerçek e-posta ile şifre yenileme denemesi
 - İlk işletme sahibi hesabının gerçek bilgilerle oluşturulması
+
+## Yayına hazırlık ön kontrolü
+
+Bu komut tablo, görev/yetki, yazılabilir dizin, yedek betikleri, açık kritik sorunlar ve canlı alan adı HTTPS kuralını kontrol eder. Herhangi bir yayın veya veri aktarımı yapmaz:
+
+```powershell
+C:\xampp\php\php.exe -d extension=sqlite3 spark formmix:verify-release-readiness
+```
+
+Docker MySQL ortamında:
+
+```powershell
+docker compose exec -T app php spark formmix:verify-release-readiness
+```
+
+Teknik ön kontrolün geçmesi manuel kabul testinin yerine geçmez. Manuel maddeler `/panel/yayina-hazirlik` ekranında işletme sahibi tarafından tamamlanır.
+
+## Manuel kabul testi verileri
+
+Yerel Docker MySQL'e ayırt edilebilir `KABUL-*` verileri eklemek için:
+
+```powershell
+docker compose exec -T app php spark formmix:seed-acceptance-data
+```
+
+Komut mükerrer çalıştırmaya dayanıklıdır. Var olan kabul verisini görürse ikinci kayıt oluşturmaz. Gerçek kullanıcı hesabı veya parola oluşturmaz.
+
+Manuel testler bittikten sonra yalnızca sabit kabul verilerini temizlemek için açık onay parametresi gerekir:
+
+```powershell
+docker compose exec -T app php spark formmix:cleanup-acceptance-data --confirm
+```
+
+Temizleme komutu bu aşamada çalıştırılmamıştır. Gerçek işletme kayıtlarını önekle arayıp toplu silmez; yalnızca komutun oluşturduğu sabit kodları hedefler.

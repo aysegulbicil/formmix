@@ -11,6 +11,7 @@ use App\Models\CustomerAssignmentModel;
 use App\Models\CustomerContactModel;
 use App\Models\CustomerModel;
 use App\Models\EmployeeModel;
+use App\Models\SalesDocumentModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -80,12 +81,14 @@ class Customers extends BaseController
             ->join('employees', 'employees.id = customer_assignments.employee_id')->where('customer_id', $id)->orderBy('started_at', 'DESC')->findAll();
         $activities = (new CustomerActivityModel())->select('customer_activities.*, employees.full_name AS employee_name')
             ->join('employees', 'employees.id = customer_activities.employee_id', 'left')->where('customer_id', $id)->orderBy('happened_at', 'DESC')->findAll();
+        $salesDocuments = (new SalesDocumentModel())->where('customer_id', $id)->orderBy('created_at', 'DESC')->findAll();
 
         return view('panel/customers/show', [
             'title' => $customer['company_name'] . ' | FORMMIX', 'pageTitle' => $customer['company_name'], 'activeNav' => 'customers',
             'customer' => $customer, 'contact' => $contact, 'assignments' => $assignments, 'activities' => $activities,
             'statuses' => self::STATUSES, 'activityTypes' => self::ACTIVITIES, 'employees' => $this->activeEmployees(),
             'canAssign' => auth()->user()?->can('customers.assign') ?? false, 'canAddActivity' => $this->canAddActivity($customer),
+            'salesDocuments' => $salesDocuments, 'canCreateOrder' => auth()->user()?->can('orders.create') ?? false,
         ]);
     }
 

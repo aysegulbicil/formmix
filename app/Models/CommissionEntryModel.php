@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace App\Models;use CodeIgniter\Model;class CommissionEntryModel extends Model{protected $table='commission_entries';protected $returnType='array';protected $useTimestamps=true;protected $allowedFields=['commission_rule_id','sales_document_id','sales_employee_id','commission_period_id','base_amount','rate_percent','commission_amount','status','calculation_snapshot'];}

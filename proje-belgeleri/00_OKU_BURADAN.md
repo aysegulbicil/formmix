@@ -1,7 +1,7 @@
 # FORMMIX Satış ve İş Takip Sistemi
 
 **Belge tarihi:** 14 Temmuz 2026  
-**Durum:** Adım 3 tamamlandı — Ürün, seçenek ve fiyat yönetimi
+**Durum:** Adım 10 yayına hazırlık ve deneme verileri tamamlandı — manuel kabul testi ve canlıya alma bekliyor
 **Ana takip belgesi:** [02_UYGULAMA_PLANI.md](02_UYGULAMA_PLANI.md)
 
 ## Bu klasör neden var?
@@ -21,6 +21,8 @@ Bu belgelerde mümkün olduğunca sade Türkçe kullanılmıştır. Teknik bir k
 | [05_TEST_VE_ONAY.md](05_TEST_VE_ONAY.md) | Bir işin gerçekten tamamlandığını nasıl kontrol edeceğimizi açıklar. |
 | [06_KARAR_DEFTERI.md](06_KARAR_DEFTERI.md) | İşletme tarafından verilmesi gereken kararları ve alınan kararların tarihçesini tutar. |
 | [07_TEKNIK_KURULUM.md](07_TEKNIK_KURULUM.md) | Geliştirme, canlı ortam, veritabanı ve ilk kullanıcı kurulumunu açıklar. |
+| [08_KULLANIM_REHBERI.md](08_KULLANIM_REHBERI.md) | Görev bazlı manuel kabul testi ve kısa kullanıcı anlatımını içerir. |
+| [09_YAYINA_ALMA_VE_GERI_DONUS.md](09_YAYINA_ALMA_VE_GERI_DONUS.md) | Canlıya geçiş kapılarını, yayın sırasını ve geri dönüş planını açıklar. |
 
 ## Çalışma kuralımız
 
@@ -44,4 +46,6 @@ Her geliştirme çalışmasında şu sıra izlenir:
 
 ## Önemli sınır
 
-Mevcut FORMMIX sitesi çalışmaya devam edecektir. Yeni satış ve iş takip sistemi, sitenin yönetim ve saha bölümü olarak kurulacaktır. İlk sürümde resmi muhasebe programının tamamı yeniden yazılmayacaktır. Cari hesap, tahsilat, ödeme ve temel kârlılık takibi yapılacak; e-fatura ve resmi muhasebe işlemleri için daha sonra uygun bir muhasebe programıyla bağlantı kurulacaktır.
+Mevcut FORMMIX sitesi çalışmaya devam edecektir. Yeni satış ve iş takip sistemi, sitenin yönetim ve saha bölümü olarak kurulacaktır. İlk sürümde resmi muhasebe programının tamamı yeniden yazılmayacaktır. Cari hesap, tahsilat ve ödeme Adım 7 ile birlikte kullanıcı kararıyla atlanmıştır; e-fatura ve resmi muhasebe işlemleri için daha sonra uygun bir muhasebe programıyla bağlantı kurulacaktır.
+
+Fiziksel müşteri ziyareti ve konum kaydı ilk sürümde şimdilik ertelenmiştir. Bu bölüm için kod geliştirilmemiştir; müşteri görüşmeleri ve sonraki işlem tarihleri mevcut görüşme/not sistemiyle izlenecektir. Teklif/sipariş, alış/depo/stok, prim ve rapor kapsamları tamamlanmıştır. Adım 10 için kalıcı manuel kabul listesi, sorun takibi, görev bazlı kullanım rehberi ve geri dönüş planı hazırlanmıştır. Gerçek kullanıcı testleri, canlı veri aktarımı ve yayına alma kullanıcı kararıyla daha sonra yapılacaktır.

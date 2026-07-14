@@ -36,13 +36,13 @@ $accountValue = old('account_user_id', $employee['user_id'] ?? '');
     </section>
 
     <?php if ($canManageUsers): ?>
-        <section class="form-card">
+        <section class="form-card employee-form__account">
             <div class="form-card__head"><span class="step-number">3</span><div><h2>Panel hesabı</h2><p>İsteğe bağlı giriş hesabı ve görev bağlantısı.</p></div></div>
             <div class="form-grid">
                 <label class="field field--wide"><span>Kullanıcı hesabı</span><select name="account_user_id" data-account-select><option value="">Hesap bağlama</option><?php foreach ($users as $account): ?><option value="<?= esc($account['id']) ?>" <?= (string) $accountValue === (string) $account['id'] ? 'selected' : '' ?>><?= esc($account['email']) ?></option><?php endforeach; ?><option value="new" <?= $accountValue === 'new' ? 'selected' : '' ?>>+ Yeni kullanıcı hesabı oluştur</option></select><small>Bir hesap yalnızca bir personele bağlanabilir.</small></label>
                 <div class="form-grid field--wide account-new" data-account-new <?= $accountValue === 'new' ? '' : 'hidden' ?>>
                     <label class="field"><span>Giriş e-postası <b>*</b></span><input type="email" name="login_email" value="<?= esc(old('login_email')) ?>" autocomplete="email" placeholder="personel@formmix.com"><small><?= esc($errors['login_email'] ?? '') ?></small></label>
-                    <label class="field"><span>Başlangıç parolası <b>*</b></span><input type="password" name="login_password" autocomplete="new-password" minlength="12" placeholder="En az 12 karakter"><small><?= esc($errors['login_password'] ?? ($isEdit && $employee['user_id'] ? 'Boş bırakırsanız parola değişmez.' : '')) ?></small></label>
+                    <label class="field"><span>Başlangıç parolası <b>*</b></span><input type="password" name="login_password" autocomplete="new-password" minlength="6" placeholder="En az 6 karakter"><small><?= esc($errors['login_password'] ?? ($isEdit && $employee['user_id'] ? 'Boş bırakırsanız parola değişmez.' : '')) ?></small></label>
                 </div>
                 <label class="field field--wide" data-account-role <?= $accountValue === '' ? 'hidden' : '' ?>><span>Görev <b>*</b></span><select name="role"><option value="">Görev seçin</option><?php foreach ($roles as $key => $label): ?><option value="<?= esc($key) ?>" <?= old('role', $currentRole) === $key ? 'selected' : '' ?>><?= esc($label) ?></option><?php endforeach; ?></select><small><?= esc($errors['role'] ?? 'Görev, kullanıcının sistemde neleri görebileceğini belirler.') ?></small></label>
             </div>

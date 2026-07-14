@@ -247,6 +247,7 @@ class Products extends BaseController
                 throw new RuntimeException(implode(' ', $model->errors()));
             }
             $this->insertVariantLines($id, (string) $this->request->getPost('variant_lines'));
+            $this->ensureDefaultVariant($id, (string) $data['product_code']);
             if ($db->transStatus() === false) {
                 throw new RuntimeException('Ürün veritabanına yazılamadı.');
             }
@@ -278,6 +279,31 @@ class Products extends BaseController
             if ($sku === '' || ! $model->insert($row)) {
                 throw new RuntimeException(($index + 1) . '. varyant satırı kaydedilemedi: ' . implode(' ', $model->errors()));
             }
+        }
+    }
+
+    private function ensureDefaultVariant(int $productId, string $productCode): void
+    {
+        if ((new ProductVariantModel())->where('product_id', $productId)->countAllResults() > 0) {
+            return;
+        }
+
+        $base = substr(strtoupper($productCode) . '-STD', 0, 72);
+        $sku = $base;
+        $counter = 2;
+        while ((new ProductVariantModel())->withDeleted()->where('sku', $sku)->countAllResults() > 0) {
+            $sku = substr($base, 0, 72) . '-' . $counter++;
+        }
+
+        $model = new ProductVariantModel();
+        if (! $model->insert([
+            'product_id' => $productId,
+            'sku' => $sku,
+            'other_options' => json_encode(['generated_default' => true, 'label' => 'Standart'], JSON_UNESCAPED_UNICODE),
+            'preparation_type' => 'plain',
+            'is_active' => 1,
+        ])) {
+            throw new RuntimeException(implode(' ', $model->errors()) ?: 'Standart varyant oluşturulamadı.');
         }
     }
 

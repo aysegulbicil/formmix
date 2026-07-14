@@ -137,8 +137,8 @@ class Employees extends BaseController
             if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['login_email'] = 'Geçerli bir e-posta adresi yazın.';
             }
-            if (mb_strlen($password) < 12) {
-                $errors['login_password'] = 'Parola en az 12 karakter olmalıdır.';
+            if (mb_strlen($password) < 6) {
+                $errors['login_password'] = 'Parola en az 6 karakter olmalıdır.';
             }
         }
         if ($canManageUsers && $account !== '' && ! isset(self::ROLES[$role])) {
@@ -163,7 +163,11 @@ class Employees extends BaseController
                         throw new \RuntimeException(implode(' ', $users->errors()));
                     }
                     $user = $users->findById($users->getInsertID());
-                    $user->activate()->syncGroups($role);
+                    if ($user === null) {
+                        throw new \RuntimeException('Oluşturulan kullanıcı hesabı yeniden yüklenemedi.');
+                    }
+                    $user->activate();
+                    $user->syncGroups($role);
                     $data['user_id'] = (int) $user->id;
                 } elseif (ctype_digit($account)) {
                     $user = $users->findById((int) $account);
@@ -176,11 +180,13 @@ class Employees extends BaseController
                     }
                     $user->syncGroups($role);
                     if ($password !== '') {
-                        if (mb_strlen($password) < 12) {
-                            throw new \RuntimeException('Yeni parola en az 12 karakter olmalıdır.');
+                        if (mb_strlen($password) < 6) {
+                            throw new \RuntimeException('Yeni parola en az 6 karakter olmalıdır.');
                         }
                         $user->password = $password;
-                        $users->save($user);
+                        if (! $users->save($user)) {
+                            throw new \RuntimeException(implode(' ', $users->errors()));
+                        }
                     }
                     $data['user_id'] = (int) $account;
                 } elseif ($account === '') {

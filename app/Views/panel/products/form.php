@@ -5,9 +5,9 @@
 <div class="form-heading"><a class="back-link" href="<?= site_url('panel/urunler') ?>">← Ürün listesi</a><p class="page-lead"><?= $isEdit ? 'Ürün, fiyat, stok eşiği ve yeni seçenekleri güncelleyin.' : 'Siparişlerde kullanılacak ürün ve fiyat temelini oluşturun.' ?></p></div>
 <?php if ($errors): ?><div class="alert alert--error" role="alert"><strong>Formu kontrol edin.</strong><span><?= esc($errors['form'] ?? reset($errors)) ?></span></div><?php endif; ?>
 
-<form method="post" action="<?= $isEdit ? site_url('panel/urunler/' . $product['id'] . '/duzenle') : site_url('panel/urunler/yeni') ?>" class="employee-form">
+<form method="post" action="<?= $isEdit ? site_url('panel/urunler/' . $product['id'] . '/duzenle') : site_url('panel/urunler/yeni') ?>" class="product-form">
     <?= csrf_field() ?>
-    <section class="form-card">
+    <section class="form-card product-form__identity">
         <div class="form-card__head"><span class="step-number">1</span><div><h2>Ürün bilgileri</h2><p>Kod, ad, kategori ve satış durumu.</p></div></div>
         <div class="form-grid">
             <label class="field"><span>Ürün kodu <b>*</b></span><input name="product_code" value="<?= esc(old('product_code', $product['product_code'] ?? '')) ?>" maxlength="40" required placeholder="Örn. FM-POLO"><small><?= esc($errors['product_code'] ?? 'Benzersiz ve kısa bir kod kullanın.') ?></small></label>
@@ -21,7 +21,7 @@
         </div>
     </section>
 
-    <section class="form-card">
+    <section class="form-card product-form__pricing">
         <div class="form-card__head"><span class="step-number">2</span><div><h2>Fiyat ve stok temeli</h2><p>Liste fiyatları vergi hariç saklanır.</p></div></div>
         <div class="form-grid">
             <?php if ($canViewCost): ?><label class="field"><span>Alış fiyatı <b>*</b></span><div class="input-suffix"><input name="cost_price" value="<?= esc(old('cost_price', $product['cost_price'] ?? '0')) ?>" inputmode="decimal" required><em>₺</em></div><small>Yalnızca işletme sahibi ve muhasebe görebilir.</small></label><?php endif; ?>
@@ -32,7 +32,7 @@
         </div>
     </section>
 
-    <section class="form-card">
+    <section class="form-card product-form__variants">
         <div class="form-card__head"><span class="step-number">3</span><div><h2>Yeni varyantlar</h2><p>Her beden-renk birleşimi ayrı stok koduyla eklenir.</p></div></div>
         <label class="field"><span>Varyant satırları</span><textarea name="variant_lines" rows="6" placeholder="FM-POLO-M-LAC | M | Lacivert | Baskısız | 350,00"><?= esc(old('variant_lines')) ?></textarea><small>Her satır: Stok kodu | Beden | Renk | Baskısız veya Özel | İsteğe bağlı satış fiyatı. Düzenlemede yalnızca yeni satırlar eklenir.</small></label>
         <?php if ($variants): ?>
@@ -40,7 +40,7 @@
         <?php endif; ?>
     </section>
 
-    <div class="form-actions"><?php if ($isEdit): ?><button class="button button--danger-ghost" type="submit" form="status-form"><?= $product['is_active'] ? 'Satışa kapat' : 'Satışa aç' ?></button><?php endif; ?><span></span><a class="button button--secondary" href="<?= site_url('panel/urunler') ?>">Vazgeç</a><button class="button" type="submit"><?= $isEdit ? 'Değişiklikleri kaydet' : 'Ürünü kaydet' ?></button></div>
+    <div class="form-actions product-form__actions"><?php if ($isEdit): ?><button class="button button--danger-ghost" type="submit" form="status-form"><?= $product['is_active'] ? 'Satışa kapat' : 'Satışa aç' ?></button><?php endif; ?><span></span><a class="button button--secondary" href="<?= site_url('panel/urunler') ?>">Vazgeç</a><button class="button" type="submit"><?= $isEdit ? 'Değişiklikleri kaydet' : 'Ürünü kaydet' ?></button></div>
 </form>
 <?php if ($isEdit): ?><form id="status-form" method="post" action="<?= site_url('panel/urunler/' . $product['id'] . '/durum') ?>" onsubmit="return confirm('Ürünün satış durumunu değiştirmek istediğinize emin misiniz?')"><?= csrf_field() ?></form><?php endif; ?>
 
@@ -57,7 +57,7 @@
         <label class="field"><span>Bitiş</span><input type="datetime-local" name="valid_until"></label>
         <button class="button" type="submit">Özel fiyat ekle</button>
     </form>
-    <?php if ($specialPrices): ?><div class="table-wrap"><table class="data-table compact-table"><thead><tr><th>Hedef</th><th>Varyant</th><th>Fiyat</th><th>Geçerlilik</th><th>Durum</th><th></th></tr></thead><tbody><?php foreach ($specialPrices as $price): ?><tr><td data-label="Hedef"><?= esc($price['group_name'] ?: $price['company_name']) ?></td><td data-label="Varyant"><?= esc($price['sku'] ?: 'Tüm varyantlar') ?></td><td data-label="Fiyat"><strong><?= number_format((float) $price['unit_price'], 2, ',', '.') ?> ₺</strong></td><td data-label="Geçerlilik"><small><?= esc($price['valid_from'] ?: 'Hemen') ?> → <?= esc($price['valid_until'] ?: 'Süresiz') ?></small></td><td data-label="Durum"><span class="badge <?= $price['is_active'] ? 'badge--success' : 'badge--neutral' ?>"><?= $price['is_active'] ? 'Aktif' : 'Pasif' ?></span></td><td><form method="post" action="<?= site_url('panel/urunler/' . $product['id'] . '/ozel-fiyat/' . $price['id'] . '/durum') ?>"><?= csrf_field() ?><button class="text-link" type="submit"><?= $price['is_active'] ? 'Pasif yap' : 'Etkinleştir' ?></button></form></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?>
+    <?php if ($specialPrices): ?><div class="table-wrap"><table class="data-table compact-table"><thead><tr><th>Hedef</th><th>Varyant</th><th>Fiyat</th><th>Geçerlilik</th><th>Durum</th><th></th></tr></thead><tbody><?php foreach ($specialPrices as $price): ?><tr><td data-label="Hedef"><?= esc($price['group_name'] ?: $price['company_name']) ?></td><td data-label="Varyant"><?= esc($price['sku'] ?: 'Tüm varyantlar') ?></td><td data-label="Fiyat"><strong><?= number_format((float) $price['unit_price'], 2, ',', '.') ?> ₺</strong></td><td data-label="Geçerlilik"><small><?= esc($price['valid_from'] ?: 'Hemen') ?> → <?= esc($price['valid_until'] ?: 'Süresiz') ?></small></td><td data-label="Durum"><span class="badge <?= $price['is_active'] ? 'badge--success' : 'badge--neutral' ?>"><?= $price['is_active'] ? 'Aktif' : 'Pasif' ?></span></td><td data-label="İşlem"><form method="post" action="<?= site_url('panel/urunler/' . $product['id'] . '/ozel-fiyat/' . $price['id'] . '/durum') ?>"><?= csrf_field() ?><button class="text-link" type="submit"><?= $price['is_active'] ? 'Pasif yap' : 'Etkinleştir' ?></button></form></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?>
 </section>
 <?php endif; ?>
 <?= $this->endSection() ?>

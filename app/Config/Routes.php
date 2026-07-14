@@ -19,6 +19,7 @@ $routes->post('logout', '\\CodeIgniter\\Shield\\Controllers\\LoginController::lo
 
 $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], static function ($routes): void {
     $routes->get('/', 'Panel\\Dashboard::index');
+    $routes->get('kullanim-rehberi', 'Panel\\UserGuide::index');
 
     $routes->group('personel', ['filter' => 'permission:employees.view'], static function ($routes): void {
         $routes->get('/', 'Panel\\Employees::index');
@@ -54,5 +55,57 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
         $routes->post('(:num)/durum', 'Panel\\Products::toggleStatus/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/ozel-fiyat', 'Panel\\Products::storeSpecialPrice/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/ozel-fiyat/(:num)/durum', 'Panel\\Products::toggleSpecialPrice/$1/$2', ['filter' => 'permission:products.manage']);
+    });
+
+    $routes->group('siparisler', static function ($routes): void {
+        $routes->get('/', 'Panel\\SalesDocuments::index');
+        $routes->get('yeni', 'Panel\\SalesDocuments::create', ['filter' => 'permission:orders.create']);
+        $routes->post('yeni', 'Panel\\SalesDocuments::store', ['filter' => 'permission:orders.create']);
+        $routes->get('fiyat', 'Panel\\SalesDocuments::price', ['filter' => 'permission:orders.create']);
+        $routes->get('(:num)', 'Panel\\SalesDocuments::show/$1');
+        $routes->get('(:num)/duzenle', 'Panel\\SalesDocuments::edit/$1', ['filter' => 'permission:orders.create']);
+        $routes->post('(:num)/duzenle', 'Panel\\SalesDocuments::update/$1', ['filter' => 'permission:orders.create']);
+        $routes->post('(:num)/gonder', 'Panel\\SalesDocuments::submit/$1', ['filter' => 'permission:orders.create']);
+        $routes->post('(:num)/onayla', 'Panel\\SalesDocuments::approve/$1', ['filter' => 'permission:orders.approve']);
+        $routes->post('(:num)/reddet', 'Panel\\SalesDocuments::reject/$1', ['filter' => 'permission:orders.approve']);
+        $routes->post('(:num)/iptal', 'Panel\\SalesDocuments::cancel/$1');
+        $routes->post('(:num)/siparise-cevir', 'Panel\\SalesDocuments::convert/$1', ['filter' => 'permission:orders.create']);
+    });
+    $routes->group('stok', ['filter' => 'permission:stock.manage'], static function ($routes): void {
+        $routes->get('/', 'Panel\\Inventory::index');
+        $routes->post('hareket', 'Panel\\Inventory::storeMovement');
+        $routes->post('sayim', 'Panel\\Inventory::storeCount', ['filter' => 'permission:stock.count']);
+        $routes->post('depo', 'Panel\\Inventory::storeWarehouse', ['filter' => 'permission:warehouses.manage']);
+        $routes->post('siparis/(:num)/ayir', 'Panel\\Inventory::reserveOrder/$1', ['filter' => 'permission:orders.fulfill']);
+        $routes->post('siparis/(:num)/sevk', 'Panel\\Inventory::shipOrder/$1', ['filter' => 'permission:orders.fulfill']);
+    });
+    $routes->group('tedarikciler', ['filter' => 'permission:purchases.manage'], static function ($routes): void {
+        $routes->get('/', 'Panel\\Inventory::suppliers');
+        $routes->post('/', 'Panel\\Inventory::storeSupplier', ['filter' => 'permission:suppliers.manage']);
+        $routes->post('(:num)/durum', 'Panel\\Inventory::toggleSupplier/$1', ['filter' => 'permission:suppliers.manage']);
+    });
+    $routes->group('alislar', ['filter' => 'permission:purchases.manage'], static function ($routes): void {
+        $routes->get('/', 'Panel\\Inventory::purchases');
+        $routes->get('yeni', 'Panel\\Inventory::createPurchase', ['filter' => 'permission:purchases.create']);
+        $routes->post('yeni', 'Panel\\Inventory::storePurchase', ['filter' => 'permission:purchases.create']);
+        $routes->get('(:num)', 'Panel\\Inventory::showPurchase/$1');
+        $routes->post('(:num)/mal-kabul', 'Panel\\Inventory::receivePurchase/$1', ['filter' => 'permission:purchases.receive']);
+    });
+    $routes->group('primler', static function ($routes): void {
+        $routes->get('/', 'Panel\\Commissions::index');
+        $routes->post('kural', 'Panel\\Commissions::storeRule', ['filter' => 'permission:commissions.manage']);
+        $routes->post('hesapla', 'Panel\\Commissions::calculate', ['filter' => 'permission:commissions.manage']);
+        $routes->post('donem', 'Panel\\Commissions::storePeriod', ['filter' => 'permission:commissions.manage']);
+        $routes->post('donem/(:num)/ode', 'Panel\\Commissions::payPeriod/$1', ['filter' => 'permission:commissions.manage']);
+    });
+    $routes->group('raporlar', ['filter' => 'permission:reports.view'], static function ($routes): void {
+        $routes->get('/', 'Panel\\Reports::index');
+        $routes->get('disari-aktar/(:segment)/(:segment)', 'Panel\\Reports::export/$1/$2');
+    });
+    $routes->group('yayina-hazirlik', ['filter' => 'permission:settings.manage'], static function ($routes): void {
+        $routes->get('/', 'Panel\\ReleaseReadiness::index');
+        $routes->post('kontrol/(:num)', 'Panel\\ReleaseReadiness::updateItem/$1');
+        $routes->post('sorun', 'Panel\\ReleaseReadiness::storeIssue');
+        $routes->post('sorun/(:num)/kapat', 'Panel\\ReleaseReadiness::resolveIssue/$1');
     });
 });

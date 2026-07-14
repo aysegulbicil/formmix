@@ -6,9 +6,9 @@ namespace App\Commands;
 
 use App\Libraries\AuditLogger;
 use App\Models\AuditLogModel;
+use App\Models\EmployeeModel;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
-use CodeIgniter\Shield\Entities\User;
 use CodeIgniter\Shield\Models\UserModel;
 use Throwable;
 
@@ -22,24 +22,24 @@ class VerifyPermissions extends BaseCommand
     {
         $cases = [
             'owner' => [
-                'allow' => ['panel.access', 'users.manage', 'employees.view', 'employees.manage', 'products.view', 'products.manage', 'products.view-cost', 'orders.approve-high', 'finance.manage'],
+                'allow' => ['panel.access', 'users.manage', 'settings.manage', 'employees.view', 'employees.manage', 'products.view', 'products.manage', 'products.view-cost', 'orders.create', 'orders.view-all', 'orders.approve', 'orders.approve-high', 'purchases.create', 'purchases.receive', 'suppliers.manage', 'warehouses.manage', 'stock.manage', 'stock.count', 'finance.manage', 'reports.view'],
                 'deny'  => [],
             ],
             'sales_manager' => [
-                'allow' => ['panel.access', 'employees.view', 'employees.manage', 'customers.assign', 'products.view', 'products.manage', 'orders.approve', 'reports.view'],
-                'deny'  => ['products.view-cost', 'finance.manage', 'orders.approve-high'],
+                'allow' => ['panel.access', 'employees.view', 'employees.manage', 'customers.assign', 'products.view', 'products.manage', 'orders.create', 'orders.view-all', 'orders.approve', 'reports.view'],
+                'deny'  => ['products.view-cost', 'finance.manage', 'orders.approve-high', 'purchases.create', 'stock.manage', 'settings.manage'],
             ],
             'field_sales' => [
                 'allow' => ['panel.access', 'customers.view-own', 'products.view', 'orders.create', 'collections.notify'],
-                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'customers.view-all', 'orders.approve', 'finance.manage'],
+                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'customers.view-all', 'orders.view-all', 'orders.approve', 'purchases.manage', 'stock.manage', 'finance.manage', 'reports.view', 'settings.manage'],
             ],
             'accounting' => [
-                'allow' => ['panel.access', 'finance.manage', 'products.view', 'products.view-cost', 'commissions.view-all'],
-                'deny'  => ['products.manage', 'employees.manage', 'orders.approve', 'customers.assign', 'users.manage'],
+                'allow' => ['panel.access', 'finance.manage', 'products.view', 'products.view-cost', 'orders.view-all', 'purchases.manage', 'purchases.create', 'purchases.receive', 'suppliers.manage', 'commissions.view-all', 'reports.view'],
+                'deny'  => ['products.manage', 'employees.manage', 'orders.create', 'orders.approve', 'customers.assign', 'warehouses.manage', 'stock.manage', 'stock.count', 'users.manage', 'settings.manage'],
             ],
             'warehouse' => [
-                'allow' => ['panel.access', 'products.view', 'stock.manage', 'orders.fulfill', 'purchases.manage'],
-                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'finance.manage', 'customers.create', 'commissions.view-all'],
+                'allow' => ['panel.access', 'products.view', 'orders.view-all', 'stock.manage', 'stock.count', 'orders.fulfill', 'purchases.manage', 'purchases.receive'],
+                'deny'  => ['products.manage', 'products.view-cost', 'employees.view', 'employees.manage', 'orders.create', 'orders.approve', 'purchases.create', 'suppliers.manage', 'warehouses.manage', 'finance.manage', 'customers.create', 'commissions.view-all', 'reports.view', 'settings.manage'],
             ],
         ];
 
@@ -52,10 +52,10 @@ class VerifyPermissions extends BaseCommand
 
             try {
                 $suffix = bin2hex(random_bytes(5));
-                $user   = new User([
+                $user   = $users->createNewUser([
                     'username' => "permission_test_{$group}_{$suffix}",
                     'email'    => "permission-test-{$group}-{$suffix}@formmix.local",
-                    'password' => bin2hex(random_bytes(16)),
+                    'password' => 'Q7!x9z',
                 ]);
 
                 if (! $users->save($user)) {
@@ -64,7 +64,11 @@ class VerifyPermissions extends BaseCommand
 
                 $id   = (int) $users->getInsertID();
                 $user = $users->findById($id);
-                $user->addGroup($group);
+                if ($user === null) {
+                    throw new \RuntimeException('Oluşturulan kullanıcı hesabı yeniden yüklenemedi.');
+                }
+                $user->activate();
+                $user->syncGroups($group);
 
                 foreach ($expectations['allow'] as $permission) {
                     if (! $user->can($permission)) {
@@ -83,6 +87,32 @@ class VerifyPermissions extends BaseCommand
                 if ($id !== null) {
                     $users->delete($id, true);
                 }
+            }
+        }
+
+        $employeeId = null;
+        try {
+            $employeeCode = 'VERIFY-' . strtoupper(bin2hex(random_bytes(4)));
+            $employees    = new EmployeeModel();
+            $employeeId   = $employees->insert([
+                'employee_code'        => $employeeCode,
+                'full_name'            => 'Doğrulama Personeli',
+                'max_discount_percent' => '0',
+                'can_collect_payment'  => 0,
+                'is_active'            => 1,
+            ], true);
+
+            if (! is_numeric($employeeId) || ! $employees->update($employeeId, [
+                'id'            => (int) $employeeId,
+                'employee_code' => $employeeCode,
+            ])) {
+                throw new \RuntimeException(implode(' ', $employees->errors()));
+            }
+        } catch (Throwable $exception) {
+            $failed[] = 'Personel kayıt doğrulaması: ' . $exception->getMessage();
+        } finally {
+            if (is_numeric($employeeId)) {
+                (new EmployeeModel())->delete((int) $employeeId, true);
             }
         }
 

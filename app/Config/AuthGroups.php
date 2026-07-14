@@ -92,7 +92,12 @@ class AuthGroups extends ShieldAuthGroups
         'orders.approve-high'       => 'Yüksek indirimli siparişi onaylama',
         'orders.fulfill'            => 'Sipariş hazırlama ve sevkiyat',
         'purchases.manage'          => 'Alış işlemlerini yönetme',
+        'purchases.create'          => 'Alış siparişi oluşturma',
+        'purchases.receive'         => 'Mal kabul işlemi yapma',
+        'suppliers.manage'          => 'Tedarikçileri yönetme',
+        'warehouses.manage'         => 'Depoları tanımlama',
         'stock.manage'              => 'Stok hareketlerini yönetme',
+        'stock.count'               => 'Stok sayımı ve fark düzeltmesi',
         'collections.notify'        => 'Tahsilat bildirimi oluşturma',
         'finance.manage'            => 'Cari, tahsilat ve ödeme yönetimi',
         'commissions.view-own'      => 'Kendi primini görme',
@@ -112,7 +117,7 @@ class AuthGroups extends ShieldAuthGroups
     public array $matrix = [
         'owner' => [
             'panel.*', 'users.*', 'employees.*', 'settings.*', 'customers.*', 'visits.*',
-            'products.*', 'orders.*', 'purchases.*', 'stock.*', 'collections.*',
+            'products.*', 'orders.*', 'purchases.*', 'suppliers.*', 'warehouses.*', 'stock.*', 'collections.*',
             'finance.*', 'commissions.*', 'reports.*',
         ],
         'sales_manager' => [
@@ -126,11 +131,13 @@ class AuthGroups extends ShieldAuthGroups
         ],
         'accounting' => [
             'panel.access', 'customers.view-all', 'customers.create', 'orders.view-all',
-            'products.view', 'products.view-cost', 'purchases.manage', 'finance.manage',
+            'products.view', 'products.view-cost', 'purchases.manage', 'purchases.create',
+            'purchases.receive', 'suppliers.manage', 'finance.manage',
             'commissions.view-all', 'reports.view',
         ],
         'warehouse' => [
-            'panel.access', 'products.view', 'orders.view-all', 'orders.fulfill', 'purchases.manage', 'stock.manage',
+            'panel.access', 'products.view', 'orders.view-all', 'orders.fulfill',
+            'purchases.manage', 'purchases.receive', 'stock.manage', 'stock.count',
         ],
     ];
 }

@@ -24,6 +24,7 @@ class EmployeeModel extends Model
     ];
 
     protected $validationRules = [
+        'id'                  => 'permit_empty|is_natural_no_zero',
         'employee_code'       => 'required|max_length[30]|is_unique[employees.employee_code,id,{id}]',
         'full_name'           => 'required|min_length[2]|max_length[150]',
         'phone'               => 'permit_empty|max_length[30]',

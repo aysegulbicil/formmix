@@ -1,0 +1,228 @@
+:root {
+    --panel-section-gap: 20px;
+    --panel-control-gap: 10px;
+    --panel-cell-x: 16px;
+    --panel-cell-y: 13px;
+}
+
+.content {
+    width: 100%;
+    max-width: 1760px;
+}
+
+.content > :where(.panel-card, .detail-grid, .form-card, .report-section, .readiness-group, .release-issues)
+    + :where(.panel-card, .detail-grid, .form-card, .report-section, .readiness-group, .release-issues) {
+    margin-top: var(--panel-section-gap);
+}
+
+.panel-card {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.panel-card > .filter-bar {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--panel-control-gap);
+    padding: 14px 16px;
+    background: #fbfcfd;
+}
+
+.filter-bar > label:not(.search-field) {
+    min-width: 150px;
+}
+
+.filter-bar > input[type="date"],
+.filter-bar > input[type="search"] {
+    min-width: 150px;
+}
+
+.filter-bar .button {
+    white-space: nowrap;
+}
+
+.table-wrap {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+}
+
+.data-table {
+    width: 100%;
+    font-size: 13.5px;
+}
+
+.data-table th {
+    padding: 12px var(--panel-cell-x);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.data-table td {
+    padding: var(--panel-cell-y) var(--panel-cell-x);
+    line-height: 1.4;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background: #fcfdfe;
+}
+
+.data-table tbody tr:hover {
+    background: #f7fafc;
+}
+
+.data-table td > form {
+    margin: 0;
+}
+
+.data-table th:has(.sr-only),
+.data-table .row-actions,
+.data-table td[data-label="İşlem"] {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.data-table td[data-label="Miktar"],
+.data-table td[data-label="Mevcut"],
+.data-table td[data-label="Ayrılmış"],
+.data-table td[data-label="Kullanılabilir"],
+.data-table td[data-label="Kalan"],
+.data-table td[data-label="Tutar"],
+.data-table td[data-label="Toplam"],
+.data-table td[data-label="Genel toplam"],
+.data-table td[data-label="Net satış"],
+.data-table td[data-label="Maliyet"],
+.data-table td[data-label="Brüt kâr"],
+.data-table td[data-label="Prim"],
+.data-table td[data-label="Matrah"],
+.data-table td[data-label="Oran"],
+.data-table td[data-label="İndirim"] {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.data-table td[colspan] {
+    padding: 38px 20px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.data-table .row-actions,
+.data-table td[data-label="İşlem"] {
+    text-align: right;
+}
+
+.data-table .row-actions .button,
+.data-table td[data-label="İşlem"] .button {
+    min-height: 36px;
+    padding-inline: 13px;
+}
+
+.table-wrap > .empty-state {
+    border-top: 1px solid var(--line);
+}
+
+.section-heading-inline,
+.report-section__head {
+    min-height: 66px;
+    margin: 0;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+}
+
+.action-group {
+    align-items: center;
+}
+
+@media (min-width: 701px) and (max-width: 1100px) {
+    .data-table:has(th:nth-child(6)) {
+        min-width: 820px;
+    }
+
+    .data-table:has(th:nth-child(8)) {
+        min-width: 1040px;
+    }
+}
+
+@media (max-width: 700px) {
+    :root {
+        --panel-section-gap: 16px;
+    }
+
+    .panel-card > .filter-bar {
+        padding: 12px;
+    }
+
+    .filter-bar > label,
+    .filter-bar > input,
+    .filter-bar > select,
+    .filter-bar > .button {
+        width: 100%;
+        min-width: 0;
+        flex: 1 0 100%;
+    }
+
+    .data-table {
+        min-width: 0;
+        font-size: 13px;
+    }
+
+    .data-table tr {
+        padding: 13px 14px;
+    }
+
+    .data-table td {
+        min-height: 34px;
+        padding: 5px 0;
+    }
+
+    .data-table td[data-label="Miktar"],
+    .data-table td[data-label="Mevcut"],
+    .data-table td[data-label="Ayrılmış"],
+    .data-table td[data-label="Kullanılabilir"],
+    .data-table td[data-label="Kalan"],
+    .data-table td[data-label="Tutar"],
+    .data-table td[data-label="Toplam"],
+    .data-table td[data-label="Genel toplam"],
+    .data-table td[data-label="Net satış"],
+    .data-table td[data-label="Maliyet"],
+    .data-table td[data-label="Brüt kâr"],
+    .data-table td[data-label="Prim"],
+    .data-table td[data-label="Matrah"],
+    .data-table td[data-label="Oran"],
+    .data-table td[data-label="İndirim"] {
+        text-align: right;
+    }
+
+    .data-table .row-actions,
+    .data-table td[data-label="İşlem"] {
+        position: static;
+        right: auto;
+        width: 100%;
+        margin: 8px 0 0;
+        padding-top: 11px;
+        border-top: 1px dashed var(--line);
+        justify-content: flex-end;
+        text-align: right;
+    }
+
+    .data-table td[colspan] {
+        min-height: 0;
+        padding: 28px 10px;
+        display: flex;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .data-table td[colspan]::before {
+        display: none;
+    }
+
+    .section-heading-inline,
+    .report-section__head {
+        min-height: 0;
+        padding: 14px;
+    }
+}

@@ -39,14 +39,14 @@ Bir ekranın açılması veya bir düğmenin çalışması tek başına yeterli 
 - [ ] Toplamlar adet, fiyat, indirim ve vergiye göre doğru hesaplanıyor.
 - [ ] Yetki sınırını aşan indirim onay olmadan ilerlemiyor.
 - [ ] Bağlantı yavaşken düğmeye iki kez basılması iki sipariş oluşturmuyor.
-- [ ] İptal edilen sipariş stok ve prim hesaplarını doğru düzeltiyor.
+- [x] İptal edilen sipariş ayrılmış stoğu serbest bırakıyor; prim etkisi Adım 8'de doğrulanacak.
 
 ### Stok
 
-- [ ] Alış girişi stoğu artırıyor.
-- [ ] Sevkiyat stoğu azaltıyor.
-- [ ] İade, ürünün durumuna göre doğru stoğa giriyor.
-- [ ] Eksi stok izni işletme kuralına uygun çalışıyor.
+- [x] Alış girişi stoğu artırıyor.
+- [x] Sevkiyat stoğu azaltıyor ve ayrılmış miktarı kapatıyor.
+- [x] Kullanılabilir iade doğru stoğa giriyor; kullanılamaz ürün stok dışı gerekçeli hareket olarak tutuluyor.
+- [x] Eksi stok engelleniyor; stoksuz sipariş tedarik bekliyor.
 
 ### Cari hesap
 
@@ -90,3 +90,39 @@ Sorunların durumu:
 İşletme onayı:
 ```
 
+## Adım 9 ara test kaydı
+
+```text
+Adım: 9 — Raporlar ve yönetim ana sayfası
+Test tarihi: 14 Temmuz 2026
+Testi yapan: Otomatik geliştirme doğrulaması
+Kullanılan ortam: Yerel SQLite, Docker MySQL ve PHP CLI
+Deneme işlemleri: Satış özeti, personel/müşteri/ürün filtresi, brüt kâr, bekleyen sipariş, kritik stok, prim özeti, CSV/XLSX ve görev yetkileri
+Başarılı sonuçlar: Rapor hesapları, maliyet gizleme, dışa aktarım, PHP lint, rotalar, SQLite ve Docker MySQL migration, yetki matrisi, servis sağlıkları ve git diff --check
+Bulunan sorunlar: Otomatik yerel tarayıcı erişimi ortam güvenlik politikası nedeniyle reddedildi
+Sorunların durumu: Kullanıcı masaüstü, tablet ve telefon görünümünü kontrol ederek başarılı buldu
+İşletme onayı: Kullanıcı tarafından 14 Temmuz 2026 tarihinde verildi; Adım 9 tamamlandı
+```
+
+## Adım 10 hazırlık test kaydı
+
+```text
+Adım: 10 — Gerçek kullanıcı denemesi ve yayına alma hazırlığı
+Test tarihi: 14 Temmuz 2026
+Testi yapan: Otomatik geliştirme doğrulaması
+Kullanılan ortam: Yerel SQLite ve Docker MySQL
+Deneme işlemleri: 18 kontrol maddesi migration'ı, sorun/kontrol yazma ve geri alma, zorunlu kapılar, görev yetkisi, kullanım rehberi rotası ve teknik ön kontrol
+Başarılı sonuçlar: SQLite ve MySQL migration, geçici yazma/rollback, owner erişimi, diğer görevlerin reddi, rota, PHP lint, yedek betiği ve servis sağlık kontrolleri
+Bulunan sorunlar: Docker başlangıç migration'ı ile eşzamanlı ikinci migrate komutu aynı tabloyu oluşturmaya çalıştı; migration kaydı ve 18 madde eksiksiz doğrulandı. Yerel Docker production/HTTP ayrımı canlı alan adı HTTPS kontrolünden ayrıldı.
+Sorunların durumu: Düzeltildi ve tekrar doğrulandı
+İşletme onayı: Manuel kabul testleri ve gerçek canlıya alma için henüz verilmedi
+```
+
+### Kabul testi veri kaydı
+
+- Docker MySQL'e `KABUL-*` önekli bir müşteri, bir satış personeli, bir ürün, iki varyant, bir tedarikçi ve bir alış siparişi eklendi.
+- Onaylandı, onay bekliyor, tedarik bekliyor, kısmi sevk ve sevk edildi durumlarında beş sipariş oluşturuldu; genel toplamlar sırasıyla 1.296,00; 720,00; 1.152,00; 864,00 ve 432,00 TL olarak doğrulandı.
+- İki varyantın stok bakiyesi, kritik stok örneği ve sevk edilmiş siparişe bağlı hak edilmiş prim kaydı oluşturuldu.
+- Tohum komutu ikinci kez çalıştırıldı ve yeni kayıt oluşmadı.
+- `test-data` hazırlık maddesi başarılı durumuna geçti; 17 manuel madde bekliyor.
+- Temizleme komutu hazırlandı fakat çalıştırılmadı.
