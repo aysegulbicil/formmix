@@ -13,6 +13,7 @@ $routes->get('urunler', 'Products::index');
 $routes->get('katalog', 'Catalog::index');
 $routes->get('iletisim', 'Contact::index');
 $routes->post('iletisim', 'Contact::submit');
+$routes->get('urun-gorselleri/(:segment)', 'ProductMedia::show/$1');
 
 service('auth')->routes($routes, ['except' => ['register', 'logout']]);
 $routes->post('logout', '\\CodeIgniter\\Shield\\Controllers\\LoginController::logoutAction');
@@ -53,6 +54,7 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
         $routes->get('(:num)/duzenle', 'Panel\\Products::edit/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/duzenle', 'Panel\\Products::update/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/durum', 'Panel\\Products::toggleStatus/$1', ['filter' => 'permission:products.manage']);
+        $routes->post('(:num)/arsivle', 'Panel\\Products::archive/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/ozel-fiyat', 'Panel\\Products::storeSpecialPrice/$1', ['filter' => 'permission:products.manage']);
         $routes->post('(:num)/ozel-fiyat/(:num)/durum', 'Panel\\Products::toggleSpecialPrice/$1/$2', ['filter' => 'permission:products.manage']);
     });
@@ -101,11 +103,5 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
     $routes->group('raporlar', ['filter' => 'permission:reports.view'], static function ($routes): void {
         $routes->get('/', 'Panel\\Reports::index');
         $routes->get('disari-aktar/(:segment)/(:segment)', 'Panel\\Reports::export/$1/$2');
-    });
-    $routes->group('yayina-hazirlik', ['filter' => 'permission:settings.manage'], static function ($routes): void {
-        $routes->get('/', 'Panel\\ReleaseReadiness::index');
-        $routes->post('kontrol/(:num)', 'Panel\\ReleaseReadiness::updateItem/$1');
-        $routes->post('sorun', 'Panel\\ReleaseReadiness::storeIssue');
-        $routes->post('sorun/(:num)/kapat', 'Panel\\ReleaseReadiness::resolveIssue/$1');
     });
 });

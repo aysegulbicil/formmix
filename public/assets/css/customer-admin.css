@@ -361,3 +361,324 @@
         padding-right: 52px;
     }
 }
+
+/* Müşteri listesi */
+.customer-list-card {
+    overflow: hidden;
+}
+
+.customer-list-card .customer-filter {
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: #fbfcfd;
+    box-shadow: none;
+}
+
+.customer-table td {
+    vertical-align: middle;
+}
+
+.customer-list-company {
+    min-width: 230px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.customer-list-company > span:last-child {
+    min-width: 0;
+}
+
+.customer-list-company strong,
+.customer-list-company small {
+    display: block;
+}
+
+.customer-list-company strong {
+    overflow: hidden;
+    color: var(--navy);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.customer-list-company small {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.customer-table .company-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    font-size: 14px;
+}
+
+.customer-phone {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.customer-open-button {
+    width: 36px;
+    height: 36px;
+}
+
+/* Birleşik müşteri formu */
+.customer-form-heading {
+    width: 100%;
+    max-width: 1160px;
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.customer-form-heading > div {
+    flex: 1;
+}
+
+.customer-form-heading h2 {
+    margin: 4px 0 3px;
+    color: var(--navy);
+    font-size: 22px;
+}
+
+.customer-form--unified {
+    width: 100%;
+    max-width: 1160px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.customer-form-shell {
+    padding: 0;
+    overflow: hidden;
+}
+
+.customer-form-shell__intro {
+    min-height: 82px;
+    padding: 19px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(100deg, #fff 0%, #f8fafc 100%);
+}
+
+.customer-form-shell__intro h2 {
+    margin: 3px 0 0;
+    color: var(--navy);
+    font-size: 18px;
+}
+
+.customer-form-shell__required {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.customer-form-shell__required i {
+    margin-right: 4px;
+    color: var(--orange);
+    font-style: normal;
+}
+
+.customer-form-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.customer-form-section {
+    min-width: 0;
+    padding: 24px;
+}
+
+.customer-form-section:first-child {
+    border-right: 1px solid var(--line);
+}
+
+.customer-form-section__head {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.customer-form-section__head h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 16px;
+}
+
+.customer-form-section__head p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.customer-form--unified .form-grid {
+    gap: 15px 16px;
+}
+
+.customer-form--unified .field {
+    gap: 5px;
+}
+
+.customer-form--unified .field small {
+    min-height: 0;
+}
+
+.customer-form-details {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--line);
+    background: #f8fafc;
+}
+
+.customer-form-details summary {
+    min-height: 72px;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.customer-form-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.customer-form-details summary strong,
+.customer-form-details summary small {
+    display: block;
+}
+
+.customer-form-details summary strong {
+    color: var(--navy);
+    font-size: 14px;
+}
+
+.customer-form-details summary small {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.customer-form-details summary > i {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #648097;
+    border-bottom: 2px solid #648097;
+    transform: rotate(45deg);
+    transition: transform .2s ease;
+}
+
+.customer-form-details[open] summary > i {
+    transform: rotate(225deg);
+}
+
+.customer-form-details[open] summary {
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+}
+
+.customer-form-details__content {
+    padding: 22px 24px 24px;
+}
+
+.customer-commercial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.customer-address-field {
+    grid-column: 1 / -1;
+}
+
+.customer-address-field textarea {
+    min-height: 96px;
+}
+
+.customer-form-actions {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+    background: #f8fafc;
+}
+
+@media (max-width: 1100px) {
+    .customer-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-form-section:first-child {
+        border-right: 0;
+    }
+
+    .customer-form-section + .customer-form-section {
+        border-top: 1px solid var(--line);
+    }
+
+}
+
+@media (max-width: 900px) {
+    .customer-commercial-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .customer-address-field {
+        grid-row: auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .customer-form-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .customer-form-shell__intro,
+    .customer-form-section,
+    .customer-form-details summary,
+    .customer-form-details__content,
+    .customer-form-actions {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .customer-form-shell__required {
+        display: none;
+    }
+
+    .customer-commercial-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-address-field {
+        grid-column: auto;
+    }
+
+    .customer-form-actions .button {
+        flex: 1;
+    }
+
+    .customer-list-company {
+        min-width: 0;
+    }
+
+    .customer-table td:first-child {
+        padding-right: 52px;
+    }
+}

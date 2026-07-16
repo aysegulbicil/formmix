@@ -30,6 +30,7 @@ RUN composer install \
 COPY . .
 COPY .env.docker .env
 COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/php-upload.ini /usr/local/etc/php/conf.d/formmix-upload.ini
 COPY docker/entrypoint.sh /usr/local/bin/formmix-entrypoint
 
 RUN sed -i 's/\r$//' /usr/local/bin/formmix-entrypoint \

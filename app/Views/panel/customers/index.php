@@ -26,7 +26,7 @@
     </article>
 </div>
 
-<section class="customer-directory">
+<section class="customer-directory panel-card customer-list-card">
     <form class="filter-bar customer-filter" method="get">
         <label class="search-field search-field--icon"><span class="sr-only">Müşteri ara</span><input type="search" name="q" value="<?= esc($search) ?>" placeholder="Firma, kod, yetkili veya telefon ara"></label>
         <label><span class="sr-only">Durum</span><select name="durum"><option value="">Tüm durumlar</option><?php foreach ($statuses as $key => $label): ?><option value="<?= esc($key) ?>" <?= $status === $key ? 'selected' : '' ?>><?= esc($label) ?></option><?php endforeach; ?></select></label>
@@ -38,23 +38,24 @@
     <?php if (!$customers): ?>
         <div class="empty-state customer-empty"><span>FM</span><h2>Müşteri bulunamadı</h2><p>Arama ölçütlerini değiştirin veya yeni müşteri ekleyin.</p></div>
     <?php else: ?>
-        <div class="customer-grid">
-            <?php foreach ($customers as $item): ?>
-                <a class="customer-card" href="<?= site_url('panel/musteriler/' . $item['id']) ?>">
-                    <div class="customer-card__top">
-                        <span class="company-avatar"><?= esc(mb_strtoupper(mb_substr($item['company_name'], 0, 1))) ?></span>
-                        <div class="customer-card__title"><h2><?= esc($item['company_name']) ?></h2><p><?= esc($item['customer_code']) ?> <i></i> <?= esc($item['city'] . ' / ' . $item['district']) ?></p></div>
-                        <span class="badge <?= $item['status'] === 'active' ? 'badge--success' : 'badge--neutral' ?>"><?= esc($statuses[$item['status']] ?? $item['status']) ?></span>
-                    </div>
-                    <dl>
-                        <div><dt>Yetkili</dt><dd><?= esc($item['contact_name'] ?? '—') ?></dd></div>
-                        <div><dt>Telefon</dt><dd><?= esc($item['contact_phone'] ?? '—') ?></dd></div>
-                        <div><dt>Sorumlu</dt><dd><?= esc($item['owner_name'] ?? 'Atama bekliyor') ?></dd></div>
-                        <div><dt>Son işlem</dt><dd><?= $item['last_activity_at'] ? esc(date('d.m.Y', strtotime($item['last_activity_at']))) : 'Henüz yok' ?></dd></div>
-                    </dl>
-                    <span class="customer-card__open"><span>Müşteri profilini aç</span><i aria-hidden="true">→</i></span>
-                </a>
-            <?php endforeach; ?>
+        <div class="table-wrap">
+            <table class="data-table customer-table">
+                <thead><tr><th>Müşteri</th><th>Konum</th><th>Yetkili</th><th>Telefon</th><th>Sorumlu</th><th>Son işlem</th><th>Durum</th><th><span class="sr-only">İşlem</span></th></tr></thead>
+                <tbody>
+                <?php foreach ($customers as $item): ?>
+                    <tr>
+                        <td data-label="Müşteri"><a class="customer-list-company" href="<?= site_url('panel/musteriler/' . $item['id']) ?>"><span class="company-avatar"><?= esc(mb_strtoupper(mb_substr($item['company_name'], 0, 1))) ?></span><span><strong><?= esc($item['company_name']) ?></strong><small><?= esc($item['customer_code']) ?></small></span></a></td>
+                        <td data-label="Konum"><strong><?= esc($item['city']) ?></strong><small class="cell-note"><?= esc($item['district']) ?></small></td>
+                        <td data-label="Yetkili"><?= esc($item['contact_name'] ?? '—') ?></td>
+                        <td data-label="Telefon"><span class="customer-phone"><?= esc($item['contact_phone'] ?? '—') ?></span></td>
+                        <td data-label="Sorumlu"><?= esc($item['owner_name'] ?? 'Atama bekliyor') ?></td>
+                        <td data-label="Son işlem"><?= $item['last_activity_at'] ? esc(date('d.m.Y', strtotime($item['last_activity_at']))) : 'Henüz yok' ?></td>
+                        <td data-label="Durum"><span class="badge <?= $item['status'] === 'active' ? 'badge--success' : 'badge--neutral' ?>"><?= esc($statuses[$item['status']] ?? $item['status']) ?></span></td>
+                        <td class="row-actions" data-label="İşlem"><a class="icon-button customer-open-button" href="<?= site_url('panel/musteriler/' . $item['id']) ?>" aria-label="<?= esc($item['company_name']) ?> müşteri profilini aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6-1.4 1.4 4.6 4.6-4.6 4.6L9 18Z"/></svg></a></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     <?php endif; ?>
 </section>

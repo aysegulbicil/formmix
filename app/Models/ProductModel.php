@@ -14,7 +14,7 @@ class ProductModel extends Model
     protected $useTimestamps = true;
     protected $allowedFields = [
         'category_id', 'product_code', 'name', 'description', 'tax_rate', 'cost_price',
-        'list_price', 'currency', 'image_path', 'is_active', 'track_stock',
+        'list_price', 'currency', 'image_path', 'show_on_website', 'is_active', 'track_stock',
         'critical_stock_level', 'customization_mode', 'created_by_user_id',
     ];
     protected $validationRules = [

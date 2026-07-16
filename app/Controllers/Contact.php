@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Services\WebsiteProductCatalogService;
 use CodeIgniter\HTTP\RedirectResponse;
 use Throwable;
 
@@ -16,6 +17,7 @@ class Contact extends BaseController
             'title'       => 'İletişim | FORMMIX',
             'description' => 'FORMMIX ile iletişime geçin: WhatsApp’tan teklif alın, telefonla ulaşın veya iletişim formunu doldurun. Kurumsal baskılı iş kıyafetleri için buradayız.',
             'bodyClass'   => 'page-contact',
+            'products'    => (new WebsiteProductCatalogService())->all(),
         ];
 
         return view('pages/contact', $data);

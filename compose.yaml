@@ -59,6 +59,19 @@ services:
     ports:
       - "${FORMMIX_MAIL_PORT:-8025}:8025"
 
+  phpmyadmin:
+    image: phpmyadmin:5.2-apache
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "127.0.0.1:${FORMMIX_PHPMYADMIN_PORT:-8083}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   formmix_mysql_data:
   formmix_writable:

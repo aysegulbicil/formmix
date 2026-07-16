@@ -90,6 +90,8 @@ Bu dosya, geliştirmeye başlamadan önce işletmenin cevaplaması gereken sorul
 | 28 | 14.07.2026 | Cari adımını atlama | Adım 7 şu an gerekli görülmedi; doğrudan sade prim başlangıç kapsamına geçilecek. Tahsilat bazlı prim bu nedenle bekleyecek. | Kullanıcı kararı | 7, 8 |
 | 29 | 14.07.2026 | Adım 9 rapor kapsamı | Raporlar mevcut satış, stok ve prim verilerinden üretilecek. Adım 7 atlandığı için tahsilat, cari bakiye ve geciken ödeme raporları geliştirilmeyecek. Maliyet ve brüt kâr yalnızca `products.view-cost` izniyle ekranda ve dışa aktarımda gösterilecek. | Kullanıcı talimatı | 9 |
 | 30 | 14.07.2026 | Adım 10 yayın sınırı | Yayına hazırlık altyapısı, manuel test listesi, sorun takibi, rehber ve geri dönüş planı uygulanacak; gerçek veri aktarımı ve canlıya alma kullanıcı manuel testleri tamamlayıp ayrıca onay verene kadar yapılmayacak. | Kullanıcı kararı | 10 |
+| 31 | 15.07.2026 | Ürünlerin web görünürlüğü | Paneldeki ürünler kurumsal sitenin ürün kaynağı olacak. Yalnızca “Web sitesinde göster” seçeneği açık ve arşivlenmemiş ürünler ürün sayfasında ve teklif formunda gösterilecek; ana sayfada bunların ilk dördü öne çıkarılacak. Web görünürlüğü satışa açık/pasif durumundan bağımsız yönetilecek. Yeni ürünler webde gizli başlayacak. | Kullanıcı kararı | 3, kurumsal site |
+| 32 | 16.07.2026 | Yayın takip ekranının kaldırılması | Gerçek yayın işlemi yapmayan panel içi kontrol listesi gereksiz bulundu; arayüz, çalışma zamanı kodu, özel tablolar ve doğrulama komutu kaldırılacak. Canlıya alma yine kullanıcı onayıyla ayrıca yapılacak. | Kullanıcı kararı | 10 |
 
 ## Karar ekleme kuralı
 

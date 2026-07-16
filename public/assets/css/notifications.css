@@ -1,0 +1,111 @@
+.swal2-container {
+    z-index: 9999 !important;
+    font-family: Inter, "Segoe UI", Arial, sans-serif !important;
+}
+
+.formmix-swal {
+    width: min(92vw, 430px) !important;
+    padding: 26px 25px 23px !important;
+    border: 1px solid #dce5ec !important;
+    border-radius: 17px !important;
+    box-shadow: 0 24px 70px rgba(16, 42, 67, .2) !important;
+}
+
+.formmix-swal .swal2-title {
+    padding-top: 4px !important;
+    color: #102a43 !important;
+    font-size: 21px !important;
+    line-height: 1.25 !important;
+}
+
+.formmix-swal .swal2-html-container {
+    margin-top: 9px !important;
+    color: #687888 !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    white-space: pre-line !important;
+}
+
+.formmix-swal .swal2-actions {
+    margin-top: 22px !important;
+    gap: 9px !important;
+}
+
+.formmix-swal__confirm,
+.formmix-swal__cancel {
+    min-height: 43px !important;
+    margin: 0 !important;
+    padding: 0 19px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    box-shadow: none !important;
+    font-weight: 750 !important;
+}
+
+.formmix-swal__confirm {
+    background: #102a43 !important;
+    color: #fff !important;
+}
+
+.formmix-swal__confirm:hover {
+    background: #163d61 !important;
+}
+
+.formmix-swal__cancel {
+    background: #edf2f6 !important;
+    color: #102a43 !important;
+}
+
+.formmix-swal--toast {
+    width: min(92vw, 390px) !important;
+    padding: 13px 15px !important;
+    border-left: 4px solid #16835f !important;
+    border-radius: 12px !important;
+    box-shadow: 0 14px 38px rgba(16, 42, 67, .18) !important;
+}
+
+.formmix-swal--toast .swal2-title {
+    color: #102a43 !important;
+    font-size: 14px !important;
+}
+
+.formmix-swal--toast .swal2-html-container {
+    margin: 2px 0 0 !important;
+    font-size: 11.5px !important;
+}
+
+.formmix-swal--toast .swal2-icon {
+    width: 30px !important;
+    height: 30px !important;
+    margin: 0 11px 0 0 !important;
+}
+
+.formmix-swal__timer {
+    background: #16835f !important;
+}
+
+body.swal2-shown:not(.swal2-no-backdrop) {
+    overflow: hidden;
+}
+
+@media (max-width: 520px) {
+    .formmix-swal {
+        padding: 23px 18px 20px !important;
+        border-radius: 15px !important;
+    }
+
+    .formmix-swal .swal2-actions {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .formmix-swal .swal2-actions:not(:has(.formmix-swal__cancel)) {
+        grid-template-columns: 1fr !important;
+    }
+
+    .formmix-swal__confirm,
+    .formmix-swal__cancel {
+        width: 100% !important;
+    }
+}

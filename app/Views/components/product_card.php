@@ -7,7 +7,7 @@ $waText = 'Merhaba, ' . $product['name'] . ' için teklif almak istiyorum.';
         <?php if (! empty($product['badge'])): ?>
             <span class="badge"><?= esc($product['badge']) ?></span>
         <?php endif; ?>
-        <img src="<?= asset($product['image']) ?>" alt="<?= esc($product['name']) ?>" loading="lazy" width="400" height="300">
+        <img src="<?= esc($product['image_url'] ?? asset($product['image'] ?? 'images/product-tshirt.svg')) ?>" alt="<?= esc($product['name']) ?>" loading="lazy" width="400" height="300">
     </div>
     <div class="product-card__body">
         <h3 class="product-card__title"><?= esc($product['name']) ?></h3>

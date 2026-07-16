@@ -23,7 +23,7 @@
     <?php if ($products === []): ?>
         <div class="empty-state"><span>Ü</span><h2>Ürün bulunamadı</h2><p>Arama ölçütlerini değiştirin veya yeni ürün oluşturun.</p></div>
     <?php else: ?>
-        <form method="post" action="<?= site_url('panel/urunler/toplu-fiyat') ?>">
+        <form method="post" action="<?= site_url('panel/urunler/toplu-fiyat') ?>" data-swal-confirm="Seçili ürünlerin liste fiyatları güncellensin mi?" data-swal-confirm-title="Toplu fiyat güncelleme">
             <?= csrf_field() ?>
             <div class="table-wrap">
                 <table class="data-table product-table">
@@ -37,15 +37,29 @@
                             <td data-label="Liste fiyatı"><?php if ((float) $item['list_price'] > 0): ?><strong><?= number_format((float) $item['list_price'], 2, ',', '.') ?> ₺</strong><small class="cell-note">Vergi hariç · KDV %<?= esc(rtrim(rtrim((string) $item['tax_rate'], '0'), '.')) ?></small><?php else: ?><span class="badge badge--warning">Fiyat bekliyor</span><?php endif; ?></td>
                             <?php if ($canViewCost): ?><td data-label="Alış fiyatı"><strong><?= number_format((float) $item['cost_price'], 2, ',', '.') ?> ₺</strong></td><?php endif; ?>
                             <td data-label="Seçenekler"><strong><?= esc($item['variant_count']) ?> varyant</strong><small class="cell-note"><?= $item['size_count'] ? esc($item['size_count']) . ' beden' : 'Beden yok' ?> · <?= $item['color_count'] ? esc($item['color_count']) . ' renk' : 'Renk yok' ?><?= $item['has_customized'] ? ' · Özel ürün' : '' ?></small></td>
-                            <td data-label="Durum"><span class="badge <?= $item['is_active'] ? 'badge--success' : 'badge--neutral' ?>"><?= $item['is_active'] ? 'Satışa açık' : 'Pasif' ?></span></td>
-                            <td class="row-actions" data-label="İşlem"><?php if ($canManage): ?><a class="icon-button" href="<?= site_url('panel/urunler/' . $item['id'] . '/duzenle') ?>" aria-label="<?= esc($item['name']) ?> ürününü düzenle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17.25-.03 3.78 3.78-.03L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg></a><?php endif; ?></td>
+                            <td data-label="Durum"><div class="product-status-stack"><span class="badge <?= $item['is_active'] ? 'badge--success' : 'badge--neutral' ?>"><?= $item['is_active'] ? 'Satışa açık' : 'Pasif' ?></span><span class="badge <?= $item['show_on_website'] ? 'badge--info' : 'badge--neutral' ?>"><?= $item['show_on_website'] ? 'Webde görünür' : 'Webde gizli' ?></span></div></td>
+                            <td class="row-actions" data-label="İşlem">
+                                <?php if ($canManage): ?>
+                                    <div class="row-action-group">
+                                        <a class="icon-button" href="<?= site_url('panel/urunler/' . $item['id'] . '/duzenle') ?>" aria-label="<?= esc($item['name']) ?> ürününü düzenle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17.25-.03 3.78 3.78-.03L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg></a>
+                                        <button class="icon-button icon-button--danger" type="submit" form="archive-product-<?= esc($item['id']) ?>" aria-label="<?= esc($item['name']) ?> ürününü arşivle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12ZM8 9h8v10H8V9Zm7.5-5-1-1h-5l-1 1H5v2h14V4h-3.5Z"/></svg></button>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-            <?php if ($canManage): ?><div class="bulk-bar bulk-price-bar"><div class="bulk-price-bar__copy"><strong>Toplu liste fiyatı güncelleme</strong><small>Seçili ürünlerin mevcut fiyatına yüzde uygular; değişiklikler geçmişe yazılır.</small></div><div class="bulk-price-bar__actions"><label class="input-suffix bulk-price-bar__input"><input name="change_percent" inputmode="decimal" placeholder="Örn. 10 veya -5" aria-label="Fiyat değişim yüzdesi"><em>%</em></label><button class="button button--secondary" type="submit" onclick="return confirm('Seçili ürünlerin liste fiyatları güncellensin mi?')">Fiyatları güncelle</button></div></div><?php endif; ?>
+            <?php if ($canManage): ?><div class="bulk-bar bulk-price-bar"><div class="bulk-price-bar__copy"><strong>Toplu liste fiyatı güncelleme</strong><small>Seçili ürünlerin mevcut fiyatına yüzde uygular; değişiklikler geçmişe yazılır.</small></div><div class="bulk-price-bar__actions"><label class="input-suffix bulk-price-bar__input"><input name="change_percent" inputmode="decimal" placeholder="Örn. 10 veya -5" aria-label="Fiyat değişim yüzdesi"><em>%</em></label><button class="button button--secondary" type="submit">Fiyatları güncelle</button></div></div><?php endif; ?>
         </form>
+        <?php if ($canManage): ?>
+            <?php foreach ($products as $item): ?>
+                <form id="archive-product-<?= esc($item['id']) ?>" method="post" action="<?= site_url('panel/urunler/' . $item['id'] . '/arsivle') ?>" data-swal-confirm="<?= esc($item['name']) ?> ürünü listeden kaldırılsın mı? Geçmiş sipariş ve stok kayıtları korunacaktır." data-swal-confirm-title="Ürünü arşivle">
+                    <?= csrf_field() ?>
+                </form>
+            <?php endforeach; ?>
+        <?php endif; ?>
     <?php endif; ?>
 </section>
 <?= $this->endSection() ?>

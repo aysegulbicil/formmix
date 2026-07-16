@@ -10,8 +10,7 @@ Hazır deneme kayıtları `KABUL-*` koduyla başlar. Bunlar gerçek müşteri, s
 2. Onay bekleyen siparişleri, yüksek indirimleri ve gerekçeleri inceleyin.
 3. Ürün alış maliyetlerinin yalnızca yetkili görevlerde göründüğünü doğrulayın.
 4. Stok, prim ve rapor sonuçlarını örnek belgelerle karşılaştırın.
-5. `Yayına hazırlık` ekranında manuel test sonucunu ve kullanılan cihazı not edin.
-6. Kritik sorun açıkken veya geri dönüş denenmeden yazılı onay maddesini işaretlemeyin.
+5. Kritik sorunları giderip aynı senaryoyu tekrar test etmeden canlı kullanım onayı vermeyin.
 
 ## Satış yöneticisi
 
@@ -48,7 +47,7 @@ Adım 7 kullanıcı kararıyla uygulanmadığı için cari hesap, tahsilat ve ö
 
 ## Sorun bildirirken
 
-`Yayına hazırlık` ekranında şu bilgileri yazın:
+Sorun kaydında şu bilgileri yazın:
 
 - Kullandığınız görev ve cihaz
 - Açtığınız sayfa ve yaptığınız işlem

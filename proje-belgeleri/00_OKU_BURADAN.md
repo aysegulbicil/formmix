@@ -1,7 +1,7 @@
 # FORMMIX Satış ve İş Takip Sistemi
 
 **Belge tarihi:** 14 Temmuz 2026  
-**Durum:** Adım 10 yayına hazırlık ve deneme verileri tamamlandı — manuel kabul testi ve canlıya alma bekliyor
+**Durum:** Adım 10 manuel kabul testi ve canlıya alma bekliyor; panel içi yayın takip ekranı kaldırıldı
 **Ana takip belgesi:** [02_UYGULAMA_PLANI.md](02_UYGULAMA_PLANI.md)
 
 ## Bu klasör neden var?

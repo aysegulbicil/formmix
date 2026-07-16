@@ -56,5 +56,5 @@ $accountValue = old('account_user_id', $employee['user_id'] ?? '');
         <span></span><a class="button button--secondary" href="<?= site_url('panel/personel') ?>">Vazgeç</a><button class="button" type="submit"><?= $isEdit ? 'Değişiklikleri kaydet' : 'Personeli kaydet' ?></button>
     </div>
 </form>
-<?php if ($isEdit): ?><form id="status-form" method="post" action="<?= site_url('panel/personel/' . $employee['id'] . '/durum') ?>" onsubmit="return confirm('Personelin durumunu değiştirmek istediğinize emin misiniz?')"><?= csrf_field() ?></form><?php endif; ?>
+<?php if ($isEdit): ?><form id="status-form" method="post" action="<?= site_url('panel/personel/' . $employee['id'] . '/durum') ?>" data-swal-confirm="Personelin durumunu değiştirmek istediğinize emin misiniz?" data-swal-confirm-title="Personel durumunu değiştir"><?= csrf_field() ?></form><?php endif; ?>
 <?= $this->endSection() ?>

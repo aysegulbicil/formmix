@@ -68,6 +68,7 @@
     </div>
 </section>
 
+<?php if ($featured): ?>
 <!-- 4) ÖNE ÇIKAN ÜRÜNLER -->
 <section class="section">
     <div class="container">
@@ -86,6 +87,7 @@
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- 5) SEKTÖRLERE ÖZEL ÇÖZÜMLER -->
 <section class="section section--gray">

@@ -5,7 +5,7 @@
 <?php
 $errors   = session('errors') ?? [];
 $sent     = session('sent') ?? false;
-$products = site_data('products');
+$products = $products ?? [];
 $selected = old('product');
 ?>
 

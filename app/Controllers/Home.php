@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Services\WebsiteProductCatalogService;
+
 /**
  * Anasayfa.
  */
@@ -9,7 +11,7 @@ class Home extends BaseController
 {
     public function index(): string
     {
-        $products = site_data('products');
+        $products = (new WebsiteProductCatalogService())->all();
 
         $data = [
             'title'       => 'FORMMIX | Kurumsal Baskılı İş Kıyafetleri',
@@ -19,7 +21,7 @@ class Home extends BaseController
             'sectors'     => site_data('sectors'),
             'campaigns'   => site_data('campaigns'),
             'process'     => site_data('process'),
-            'featured'    => array_values(array_filter($products, static fn ($p) => ! empty($p['home_featured']))),
+            'featured'    => array_slice($products, 0, 4),
         ];
 
         return view('pages/home', $data);

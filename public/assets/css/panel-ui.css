@@ -10,8 +10,8 @@
     max-width: 1760px;
 }
 
-.content > :where(.panel-card, .detail-grid, .form-card, .report-section, .readiness-group, .release-issues)
-    + :where(.panel-card, .detail-grid, .form-card, .report-section, .readiness-group, .release-issues) {
+.content > :where(.panel-card, .detail-grid, .form-card, .report-section)
+    + :where(.panel-card, .detail-grid, .form-card, .report-section) {
     margin-top: var(--panel-section-gap);
 }
 

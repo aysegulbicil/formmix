@@ -33,8 +33,12 @@ $bodyClass = $bodyClass ?? '';
 
     <!-- Stil -->
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>?v=1.9">
+    <link rel="stylesheet" href="<?= asset('css/sweetalert2.min.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/notifications.css') ?>">
 
     <script src="<?= asset('js/main.js') ?>?v=1.9" defer></script>
+    <script src="<?= asset('js/sweetalert2.all.min.js') ?>" defer></script>
+    <script src="<?= asset('js/notifications.js') ?>" defer></script>
 </head>
 <body class="<?= esc($bodyClass) ?>">
 

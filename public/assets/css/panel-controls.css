@@ -1,0 +1,107 @@
+/* Panel genelindeki form kontrollerinin tarayıcılar arası hizasını sabitler. */
+.app-main select:not([multiple]):not([size]) {
+    width: auto;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 42px 0 13px !important;
+    border: 1px solid #ccd7e0;
+    border-radius: 9px;
+    outline: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23102a43' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    background-size: 16px 16px;
+    color: var(--text);
+    line-height: 1.2;
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.app-main select:not([multiple]):not([size]):hover {
+    border-color: #aebfcb;
+}
+
+.app-main select:not([multiple]):not([size]):focus {
+    border-color: var(--navy-2);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(22, 61, 97, .1);
+}
+
+.app-main select:not([multiple]):not([size]):disabled {
+    border-color: #dfe6eb;
+    background-color: #f1f4f6;
+    color: #8997a3;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.app-main select::-ms-expand {
+    display: none;
+}
+
+.app-main select option,
+.app-main select optgroup {
+    background: #fff;
+    color: var(--text);
+    font: inherit;
+}
+
+/* Label içindeki select'lerde baseline kaynaklı dikey oynamayı kaldırır. */
+.app-main .filter-bar > label:not(.search-field) {
+    display: flex;
+    align-items: stretch;
+    line-height: normal;
+}
+
+.app-main .filter-bar > label:not(.search-field) > select {
+    width: 100%;
+    display: block;
+    flex: 1 1 auto;
+}
+
+.app-main .field > select {
+    width: 100%;
+    min-width: 0;
+    display: block;
+}
+
+.app-main .product-picker > select {
+    width: 100%;
+    min-width: 0;
+    display: block;
+}
+
+/* Tablo içi kompakt işlemler kendi 38 px ritmini korur. */
+.app-main .inline-form select:not([multiple]):not([size]) {
+    height: 38px;
+    min-height: 38px;
+    padding-left: 10px !important;
+    background-position: right 10px center;
+    background-size: 14px 14px;
+}
+
+.app-main .activity-form select:not([multiple]):not([size]) {
+    height: 42px;
+    min-height: 42px;
+}
+
+@media (max-width: 700px) {
+    .app-main select:not([multiple]):not([size]) {
+        max-width: 100%;
+        font-size: 14px;
+    }
+
+    .app-main .filter-bar > label:not(.search-field),
+    .app-main .filter-bar > label:not(.search-field) > select,
+    .app-main .filter-bar > select {
+        width: 100%;
+        min-width: 0;
+    }
+}

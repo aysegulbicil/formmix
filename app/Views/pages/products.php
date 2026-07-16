@@ -16,11 +16,15 @@
             'title'   => 'Polo yaka başta olmak üzere tüm ürünlerimiz',
             'lead'    => "İhtiyacınıza uygun ürünü seçin, WhatsApp'tan hızlıca teklif alın. Tüm ürünler logonuza özel hazırlanır.",
         ]) ?>
-        <div class="products-grid products-grid--five">
-            <?php foreach ($products as $product): ?>
-                <?= view('components/product_card', ['product' => $product]) ?>
-            <?php endforeach; ?>
-        </div>
+        <?php if ($products): ?>
+            <div class="products-grid products-grid--five">
+                <?php foreach ($products as $product): ?>
+                    <?= view('components/product_card', ['product' => $product]) ?>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state"><h2>Ürünlerimiz güncelleniyor</h2><p>Güncel ürün seçenekleri için WhatsApp üzerinden bize ulaşabilirsiniz.</p></div>
+        <?php endif; ?>
     </div>
 </section>
 

@@ -105,21 +105,19 @@ C:\xampp\php\php.exe -d extension=sqlite3 spark shield:user removegroup -e kulla
 - Gerçek e-posta ile şifre yenileme denemesi
 - İlk işletme sahibi hesabının gerçek bilgilerle oluşturulması
 
-## Yayına hazırlık ön kontrolü
+## Yerel veritabanını tarayıcıdan görüntüleme
 
-Bu komut tablo, görev/yetki, yazılabilir dizin, yedek betikleri, açık kritik sorunlar ve canlı alan adı HTTPS kuralını kontrol eder. Herhangi bir yayın veya veri aktarımı yapmaz:
+Docker ortamında phpMyAdmin yalnızca yerel bilgisayardan erişilecek şekilde çalışır:
 
-```powershell
-C:\xampp\php\php.exe -d extension=sqlite3 spark formmix:verify-release-readiness
-```
+- Adres: `http://localhost:8083`
+- Sunucu: `db`
+- Kullanıcı: `formmix`
+- Parola: `formmix_local_password`
+- Veritabanı: `formmix`
 
-Docker MySQL ortamında:
+Port doluysa Docker başlatılmadan önce `FORMMIX_PHPMYADMIN_PORT` ortam değişkeniyle farklı bir yerel port seçilebilir. phpMyAdmin canlı sunucuya yayınlanmamalıdır.
 
-```powershell
-docker compose exec -T app php spark formmix:verify-release-readiness
-```
-
-Teknik ön kontrolün geçmesi manuel kabul testinin yerine geçmez. Manuel maddeler `/panel/yayina-hazirlik` ekranında işletme sahibi tarafından tamamlanır.
+Teknik kontroller manuel kabul testinin yerine geçmez; görev ve cihaz senaryoları canlıya almadan önce ayrıca doğrulanmalıdır.
 
 ## Manuel kabul testi verileri
 

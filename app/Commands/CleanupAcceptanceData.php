@@ -62,7 +62,6 @@ class CleanupAcceptanceData extends BaseCommand
             if ($employee) {
                 $db->table('employees')->where('id', $employee['id'])->delete();
             }
-            $db->table('release_readiness_items')->where('code', 'test-data')->update(['status' => 'pending', 'notes' => null, 'checked_by_user_id' => null, 'checked_at' => null, 'updated_at' => date('Y-m-d H:i:s')]);
             $db->transCommit();
             CLI::write('KABUL-* manuel kabul testi verileri temizlendi.', 'green');
             return EXIT_SUCCESS;

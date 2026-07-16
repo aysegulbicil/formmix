@@ -41,6 +41,5 @@
         <div><h3>Teklif ve siparişler</h3><p>Yeni kayıtları ve onay akışını izleyin.</p></div><?php if($pendingOrderCount>0): ?><span class="badge badge--warning"><?= esc($pendingOrderCount) ?> onay bekliyor</span><?php else: ?><span class="action-card__arrow">→</span><?php endif; ?>
     </a><?php endif; ?>
     <?php if ($user?->can('reports.view')): ?><a class="action-card" href="<?= site_url('panel/raporlar') ?>"><span class="action-card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18v-2H5V3H3Zm4 13h3V9H7v7Zm5 0h3V5h-3v11Zm5 0h3v-4h-3v4Z"/></svg></span><div><h3>Raporlar</h3><p>Satış, stok, prim ve kârlılığı filtreleyin.</p></div><span class="action-card__arrow">→</span></a><?php endif; ?>
-    <?php if ($user?->can('settings.manage')): ?><a class="action-card" href="<?= site_url('panel/yayina-hazirlik') ?>"><span class="action-card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5.05 3.41 9.76 8 11 4.59-1.24 8-5.95 8-11V5l-8-3Zm-1 14-4-4 1.41-1.41L11 13.17l4.59-4.58L17 10l-6 6Z"/></svg></span><div><h3>Yayına hazırlık</h3><p>Manuel testleri, sorunları ve geri dönüş hazırlığını izleyin.</p></div><span class="action-card__arrow">→</span></a><?php endif; ?>
 </div>
 <?= $this->endSection() ?>

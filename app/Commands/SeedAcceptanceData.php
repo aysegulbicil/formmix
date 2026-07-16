@@ -82,7 +82,6 @@ class SeedAcceptanceData extends BaseCommand
             $rule = (int) $db->insertID();
             $db->table('commission_entries')->insert(['commission_rule_id' => $rule, 'sales_document_id' => $documentIds['shipped'], 'sales_employee_id' => $employee, 'base_amount' => 360, 'rate_percent' => 3, 'commission_amount' => 10.80, 'status' => 'earned', 'calculation_snapshot' => json_encode(['source' => 'acceptance_test', 'document' => 'KABUL-SIP-SEVK'], JSON_UNESCAPED_UNICODE), 'created_at' => $now, 'updated_at' => $now]);
 
-            $db->table('release_readiness_items')->where('code', 'test-data')->update(['status' => 'passed', 'notes' => 'KABUL-* kodlu müşteri, ürün, stok, alış, sipariş ve prim verileri oluşturuldu.', 'checked_by_user_id' => $user['id'], 'checked_at' => $now, 'updated_at' => $now]);
             if (! $db->transStatus()) {
                 throw new RuntimeException('Deneme verileri kaydedilemedi.');
             }

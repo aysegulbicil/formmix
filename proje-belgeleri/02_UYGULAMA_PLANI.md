@@ -1,6 +1,6 @@
 # Adım Adım Uygulama Planı
 
-**Son güncelleme:** 14 Temmuz 2026  
+**Son güncelleme:** 15 Temmuz 2026
 **Şu anki adım:** Adım 10 hazırlığı tamamlandı — manuel kabul testi bekliyor
 **Genel durum:** Adım 7 kullanıcı kararıyla atlandı; canlı veri aktarımı ve yayına alma kullanıcı onayına kadar yapılmayacak
 
@@ -162,6 +162,7 @@ Personel sadece satışa açık ürünleri ve kendisine izin verilen fiyatları 
 - Yapılan testler: PHP söz dizimi, rota listesi, `git diff --check`, SQLite migrationı, Docker MySQL migrationı, altı katalog ürünü ve 126 polo varyantı doğrulaması, beş görev için izin/ret testi, gerçek CSRF korumalı ürün ve varyant kaydı, 1280 px masaüstü ve 390x844 telefon görünümü, yatay taşma, tarayıcı konsolu ve kurumsal ürün sayfası gerileme kontrolü.
 - Geçici test ürünü ve işlem geçmişi test sonunda temizlendi; mevcut işletme kayıtları korundu.
 - Açık konu: Gerçek alış ve liste satış tutarları işletme tarafından girilecek. Tutarı bilinmeyen katalog ürünleri bu nedenle pasif ve "Fiyat bekliyor" durumundadır.
+- 15 Temmuz 2026 genişletmesi: Ürün kartına satış durumundan bağımsız “Web sitesinde göster” seçeneği eklendi. Seçenek açık olan ve arşivlenmemiş ürünler kurumsal `/urunler` sayfasında, ana sayfadaki öne çıkan ürünlerde ve iletişim/teklif formunda veritabanından gösteriliyor. Mevcut altı kurumsal site ürünü geçişte görünür bırakıldı; yeni ürünler varsayılan olarak webde gizli başlıyor. SQLite ve Docker MySQL migrationları, gizli/görünür/arşivlenmiş ürün HTTP senaryoları, görsel URL’si, PHP lint ve `git diff --check` doğrulandı; geçici test ürünü temizlendi.
 - Sonraki çalışma: Adım 5 — Teklif ve sipariş. Adım 4 fiziksel ziyaret ihtiyacı bulunmadığı için işletme kararıyla ertelendi.
 
 ---
@@ -337,33 +338,26 @@ Rapor sonuçları örnek veritabanı kayıtlarıyla tek tek karşılaştırılma
 
 ## Adım 10 — Gerçek kullanıcı denemesi ve yayına alma
 
-**Durum:** `[~] Yayına hazırlık altyapısı tamamlandı — manuel test ve canlı onay bekliyor`
+**Durum:** `[~] Manuel test ve canlı onay bekliyor; panel içi yayın takip ekranı kaldırıldı`
 **Amaç:** Sistemi bütün personele açmadan önce küçük bir grupla güvenli biçimde denemek.
 
 ### Yapılacaklar
 
 - [x] `KABUL-*` kodlu, gerçek kayıtlardan açıkça ayrılan ve güvenli komutla temizlenebilen müşteri, ürün/varyant, stok, tedarikçi, alış, sipariş ve prim deneme verileri oluşturuldu.
 - [ ] İşletme sahibi, satış yöneticisi, saha personeli, muhasebe ve depo kullanıcılarıyla manuel kabul testi yapılacak.
-- [x] Kullanım sırasında bulunan sorunların önem derecesi, açıklaması, çözümü ve tekrar testiyle saklanacağı ekran yapıldı.
-- [~] Kritik sorunların kapanmadan hazırlık durumunu engellemesi uygulandı; gerçek sorunlar manuel test sırasında giderilip tekrar test edilecek.
+- [-] Panel içi sorun ve yayın kontrol ekranı sonradan gereksiz bulunarak kaldırıldı; test notları proje belgeleri dışında kullanıcı tarafından seçilen yöntemle tutulacak.
 - [x] Panel içinde görev bazlı kısa kullanım rehberi ve ayrıntılı proje rehberi hazırlandı.
 - [-] Canlı veri aktarımı kullanıcı kararıyla manuel testlerden sonraya bırakıldı; bu çalışmada yapılmadı.
 - [x] Son yedek ve geri dönüş için zorunlu kontrol kapıları ile uygulanacak plan hazırlandı; gerçek son yedek yayından hemen önce alınacak.
 - [-] Sınırlı kullanıcı ve genel yayın kullanıcı kararıyla sonraya bırakıldı; bu çalışmada yapılmadı.
 
-### Yayına hazırlık kaydı — 14 Temmuz 2026
+### Adım 10 güncellemesi — 16 Temmuz 2026
 
-- Yalnızca `settings.manage` yetkili işletme sahibinin erişebildiği `/panel/yayina-hazirlik` ekranı eklendi.
-- Deneme hazırlığı, beş görev, üç cihaz, güvenlik, e-posta, yedek, geri dönüş, canlı ortam, eğitim, destek ve yazılı onayı kapsayan 18 kalıcı kontrol maddesi oluşturuldu.
-- Sorunlu ve kapsam dışı maddelerde açıklama; sorun kapatmada çözüm ve tekrar test notu zorunlu tutuldu. Yedek, geri dönüş, canlı ortam, kritik sorun ve yazılı onay kapsam dışı bırakılamaz.
-- Açık kritik/yüksek sorun, bekleyen/sorunlu madde veya geçmemiş zorunlu kapı varken ekran “hazır” durumuna geçmez.
-- Bütün panel kullanıcılarının görevine uygun içeriği gördüğü `/panel/kullanim-rehberi` ekranı eklendi.
-- `formmix:verify-release-readiness` tablo, görev/yetki, yazılabilir dizin, yedek betikleri, HTTPS canlı alan adı kuralı ve geçici yazma/geri alma işlemlerini doğruluyor; yayın işlemi yapmıyor.
-- SQLite ve Docker MySQL migration’ları, teknik ön kontrol, görev yetkileri, PHP lint, rotalar ve `git diff --check` doğrulandı.
-- `formmix:seed-acceptance-data` komutu Docker MySQL üzerinde çalıştırıldı; ikinci çalıştırmada mükerrer kayıt oluşturmadığı doğrulandı.
-- Deneme verileri: `KABUL-MUS-001`, `KABUL-URUN-001`, iki varyant, `KABUL-ALS-001` ve onaylı/onay bekleyen/tedarik bekleyen/kısmi sevk/sevk edilmiş beş sipariş.
-- Deneme verisi hazırlık maddesi otomatik olarak “Başarılı” yapıldı; kalan 17 manuel madde “Bekliyor” durumundadır.
-- Canlıya alma yapılmadı. Deneme verileri gerektiğinde yalnızca `formmix:cleanup-acceptance-data --confirm` komutuyla temizlenebilir.
+- `/panel/yayina-hazirlik` ekranı, rotaları, controller/model/view katmanı ve özel doğrulama komutu gereksiz bulunduğu için kaldırıldı.
+- Ekrana ait veritabanı tabloları yeni migration ile kaldırılıyor; satış, stok, sipariş, prim ve rapor verileri etkilenmiyor.
+- Bütün panel kullanıcılarının görevine uygun içeriği gördüğü `/panel/kullanim-rehberi` ekranı korunuyor.
+- `formmix:seed-acceptance-data` ve `formmix:cleanup-acceptance-data --confirm` komutları ekran bağımlılığı olmadan kullanılabilir.
+- Canlıya alma yapılmadı.
 
 ### Tamamlanmış sayılması için
 

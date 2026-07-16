@@ -85,6 +85,41 @@ class Products extends BaseController
         return redirect()->to(site_url('panel/urunler'))->with('message', $active ? 'Ürün satışa açıldı.' : 'Ürün satışa kapatıldı.');
     }
 
+    public function archive(int $id): RedirectResponse
+    {
+        $product = $this->findProduct($id);
+        $model = new ProductModel();
+        $db = db_connect();
+        $db->transBegin();
+
+        try {
+            if (! $model->update($id, ['is_active' => 0])) {
+                throw new RuntimeException(implode(' ', $model->errors()));
+            }
+            if (! $model->delete($id)) {
+                throw new RuntimeException('Ürün arşivlenemedi.');
+            }
+            if (! $db->transStatus()) {
+                throw new RuntimeException('Ürün arşivleme işlemi tamamlanamadı.');
+            }
+            $db->transCommit();
+        } catch (Throwable $exception) {
+            $db->transRollback();
+            return redirect()->back()->with('errors', ['form' => $exception->getMessage()]);
+        }
+
+        (new AuditLogger())->record(
+            'product.archived',
+            'product',
+            $id,
+            $this->auditValues($product),
+            ['is_active' => false, 'archived' => true]
+        );
+
+        return redirect()->to(site_url('panel/urunler'))
+            ->with('message', 'Ürün arşivlendi; geçmiş sipariş ve veritabanı kayıtları korundu.');
+    }
+
     public function bulkPriceUpdate(): RedirectResponse
     {
         $ids = array_values(array_unique(array_filter(array_map('intval', (array) $this->request->getPost('product_ids')))));
@@ -212,14 +247,20 @@ class Products extends BaseController
     private function persist(?array $product): RedirectResponse
     {
         $id = isset($product['id']) ? (int) $product['id'] : null;
+        $oldImagePath = $product['image_path'] ?? null;
+        $newImagePath = null;
         $db = db_connect();
         $db->transBegin();
         try {
             $categoryId = $this->resolveCategory();
+            $newImagePath = $this->storeUploadedImage();
         } catch (Throwable $exception) {
             $db->transRollback();
+            $this->deleteUploadedImage($newImagePath);
             return redirect()->back()->withInput()->with('errors', ['form' => $exception->getMessage()]);
         }
+        $removeImage = $this->request->getPost('remove_image') !== null;
+        $imagePath = $newImagePath ?? ($removeImage ? null : $oldImagePath);
         $data = [
             'id' => $id, 'category_id' => $categoryId,
             'product_code' => strtoupper(trim((string) $this->request->getPost('product_code'))),
@@ -227,7 +268,8 @@ class Products extends BaseController
             'description' => trim((string) $this->request->getPost('description')) ?: null,
             'tax_rate' => $this->decimal($this->request->getPost('tax_rate')),
             'list_price' => $this->decimal($this->request->getPost('list_price')),
-            'currency' => 'TRY', 'image_path' => trim((string) $this->request->getPost('image_path')) ?: null,
+            'currency' => 'TRY', 'image_path' => $imagePath,
+            'show_on_website' => $this->request->getPost('show_on_website') ? 1 : 0,
             'is_active' => $this->request->getPost('is_active') ? 1 : 0,
             'track_stock' => $this->request->getPost('track_stock') ? 1 : 0,
             'critical_stock_level' => $this->decimal($this->request->getPost('critical_stock_level')) ?? 0,
@@ -254,7 +296,11 @@ class Products extends BaseController
             $db->transCommit();
         } catch (Throwable $exception) {
             $db->transRollback();
+            $this->deleteUploadedImage($newImagePath);
             return redirect()->back()->withInput()->with('errors', ['form' => $exception->getMessage()]);
+        }
+        if ($oldImagePath !== $imagePath) {
+            $this->deleteUploadedImage($oldImagePath);
         }
         $fresh = (new ProductModel())->find($id);
         (new AuditLogger())->record($product === null ? 'product.created' : 'product.updated', 'product', $id, $product ? $this->auditValues($product) : null, $this->auditValues($fresh ?? []));
@@ -388,6 +434,52 @@ class Products extends BaseController
 
     private function auditValues(array $product): array
     {
-        return array_intersect_key($product, array_flip(['category_id', 'product_code', 'name', 'tax_rate', 'cost_price', 'list_price', 'currency', 'is_active', 'track_stock', 'critical_stock_level', 'customization_mode']));
+        return array_intersect_key($product, array_flip(['category_id', 'product_code', 'name', 'tax_rate', 'cost_price', 'list_price', 'currency', 'image_path', 'show_on_website', 'is_active', 'track_stock', 'critical_stock_level', 'customization_mode']));
+    }
+
+    private function storeUploadedImage(): ?string
+    {
+        $file = $this->request->getFile('product_image');
+        if ($file === null || $file->getError() === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+        if (in_array($file->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) {
+            throw new RuntimeException('Ürün görseli en fazla 5 MB olabilir.');
+        }
+        if (! $file->isValid()) {
+            throw new RuntimeException('Ürün görseli yüklenemedi: ' . $file->getErrorString());
+        }
+        if ($file->getSize() > 5 * 1024 * 1024) {
+            throw new RuntimeException('Ürün görseli en fazla 5 MB olabilir.');
+        }
+
+        $mime = $file->getMimeType();
+        $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $imageInfo = @getimagesize($file->getTempName());
+        if (! isset($extensions[$mime]) || $imageInfo === false || ($imageInfo['mime'] ?? '') !== $mime) {
+            throw new RuntimeException('Yalnızca geçerli JPEG, PNG veya WebP görselleri yüklenebilir.');
+        }
+
+        $directory = WRITEPATH . 'uploads/products';
+        if (! is_dir($directory) && ! mkdir($directory, 0750, true) && ! is_dir($directory)) {
+            throw new RuntimeException('Ürün görseli klasörü hazırlanamadı.');
+        }
+        $fileName = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
+        if (! $file->move($directory, $fileName)) {
+            throw new RuntimeException('Ürün görseli kalıcı alana taşınamadı.');
+        }
+
+        return 'urun-gorselleri/' . $fileName;
+    }
+
+    private function deleteUploadedImage(?string $path): void
+    {
+        if ($path === null || ! preg_match('#^urun-gorselleri/([a-f0-9]{32}\.(?:jpg|png|webp))$#', $path, $matches)) {
+            return;
+        }
+        $file = WRITEPATH . 'uploads/products/' . $matches[1];
+        if (is_file($file)) {
+            @unlink($file);
+        }
     }
 }
