@@ -40,10 +40,11 @@
     <?php else: ?>
         <div class="table-wrap">
             <table class="data-table customer-table">
-                <thead><tr><th>Müşteri</th><th>Konum</th><th>Yetkili</th><th>Telefon</th><th>Sorumlu</th><th>Son işlem</th><th>Durum</th><th><span class="sr-only">İşlem</span></th></tr></thead>
+                <thead><tr><th>ID</th><th>Müşteri</th><th>Konum</th><th>Yetkili</th><th>Telefon</th><th>Sorumlu</th><th>Son işlem</th><th>Durum</th><th><span class="sr-only">İşlem</span></th></tr></thead>
                 <tbody>
                 <?php foreach ($customers as $item): ?>
                     <tr>
+                        <td data-label="ID"><?= (int) $item['id'] ?></td>
                         <td data-label="Müşteri"><a class="customer-list-company" href="<?= site_url('panel/musteriler/' . $item['id']) ?>"><span class="company-avatar"><?= esc(mb_strtoupper(mb_substr($item['company_name'], 0, 1))) ?></span><span><strong><?= esc($item['company_name']) ?></strong><small><?= esc($item['customer_code']) ?></small></span></a></td>
                         <td data-label="Konum"><strong><?= esc($item['city']) ?></strong><small class="cell-note"><?= esc($item['district']) ?></small></td>
                         <td data-label="Yetkili"><?= esc($item['contact_name'] ?? '—') ?></td>
@@ -58,5 +59,6 @@
             </table>
         </div>
     <?php endif; ?>
+    <?= view('components/table_pagination', ['pagination' => $pagination]) ?>
 </section>
 <?= $this->endSection() ?>

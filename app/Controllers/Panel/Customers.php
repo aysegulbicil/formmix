@@ -6,6 +6,7 @@ namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
 use App\Libraries\AuditLogger;
+use App\Libraries\TablePaginator;
 use App\Models\CustomerActivityModel;
 use App\Models\CustomerAssignmentModel;
 use App\Models\CustomerContactModel;
@@ -48,7 +49,10 @@ class Customers extends BaseController
             $model->where('customers.current_owner_employee_id', $owner);
         }
 
-        $customers = $model->orderBy('customers.updated_at', 'DESC')->findAll();
+        [$customers, $pagination] = TablePaginator::paginateModel(
+            $model->orderBy('customers.updated_at', 'DESC'),
+            TablePaginator::state($this->request, 'customers')
+        );
         $scope      = new CustomerModel();
         if (! $this->canViewAll()) {
             $scope->where('current_owner_employee_id', $this->currentEmployeeId() ?? 0);
@@ -57,7 +61,7 @@ class Customers extends BaseController
 
         return view('panel/customers/index', [
             'title' => 'Müşteriler | FORMMIX', 'pageTitle' => 'Müşteriler', 'activeNav' => 'customers',
-            'customers' => $customers, 'search' => $search, 'status' => $status, 'owner' => $owner,
+            'customers' => $customers, 'pagination' => $pagination, 'search' => $search, 'status' => $status, 'owner' => $owner,
             'statuses' => self::STATUSES, 'employees' => $this->activeEmployees(), 'canViewAll' => $this->canViewAll(),
             'stats' => ['total' => count($all), 'active' => count(array_filter($all, static fn ($x) => $x['status'] === 'active')), 'unassigned' => count(array_filter($all, static fn ($x) => empty($x['current_owner_employee_id'])))],
         ]);

@@ -134,6 +134,11 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
             <dl class="info-list">
                 <div><dt>Müşteri</dt><dd><a href="<?= site_url('panel/musteriler/'.$document['customer_id']) ?>"><?= esc($document['company_name']) ?></a></dd></div>
                 <div><dt>Satış personeli</dt><dd><?= esc($document['sales_employee_name'] ?? 'Atanmamış') ?></dd></div>
+                <?php if ($isOrder): ?>
+                    <div><dt>Hazırlayacak kişi</dt><dd><?= esc($document['preparation_employee_name'] ?? 'Atanmamış') ?></dd></div>
+                    <div><dt>Tasarımı yapacak kişi</dt><dd><?= esc($document['design_employee_name'] ?? 'Atanmamış') ?></dd></div>
+                    <div><dt>Baskıyı yapacak kişi</dt><dd><?= esc($document['print_employee_name'] ?? 'Atanmamış') ?></dd></div>
+                <?php endif; ?>
                 <div><dt>Tarih</dt><dd><?= esc(date('d.m.Y H:i', strtotime($document['created_at']))) ?></dd></div>
                 <div><dt>Vergi hariç net</dt><dd><?= number_format((float) $document['subtotal'] - (float) $document['discount_total'], 2, ',', '.') ?> ₺</dd></div>
                 <div><dt>Vergi</dt><dd><?= number_format((float) $document['tax_total'], 2, ',', '.') ?> ₺</dd></div>
@@ -151,6 +156,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
             <div class="table-wrap">
                 <table class="data-table sales-items-table">
                     <colgroup>
+                        <col class="sales-items-table__id-col">
                         <col class="sales-items-table__product-col">
                         <col class="sales-items-table__quantity-col">
                         <col class="sales-items-table__price-col">
@@ -160,6 +166,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
                     </colgroup>
                     <thead>
                         <tr>
+                            <th class="sales-items-table__id">ID</th>
                             <th class="sales-items-table__product">Ürün</th>
                             <th class="sales-items-table__quantity">Miktar</th>
                             <th class="sales-items-table__number">Birim fiyat</th>
@@ -171,6 +178,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
+                                <td class="sales-items-table__id" data-label="ID"><?= (int) $item['id'] ?></td>
                                 <td class="sales-items-table__product" data-label="Ürün"><strong><?= esc($item['product_name_snapshot']) ?></strong><span class="cell-note"><?= esc($item['product_code_snapshot'].' · '.$item['variant_snapshot']) ?></span></td>
                                 <td class="sales-items-table__quantity" data-label="Miktar"><?= esc($formatQuantity((float) $item['quantity'])) ?></td>
                                 <td class="sales-items-table__number" data-label="Birim fiyat"><?= number_format((float) $item['unit_price'], 2, ',', '.') ?> ₺</td>
@@ -210,7 +218,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
                     </label>
                     <div class="workflow-submit-group">
                         <button class="button button--block" type="submit" name="notify" value="0"><?= $document['status'] === 'procurement_waiting' ? 'Stok durumunu yeniden kontrol et' : 'Hazırlanıyor olarak ilerlet' ?></button>
-                        <button class="button button--secondary button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Hazırlanıyor + WhatsApp</button>
+                        <button class="button button--whatsapp button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Hazırlanıyor + WhatsApp</button>
                     </div>
                 </form>
             <?php endif; ?>
@@ -222,7 +230,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
                     <label class="field"><span>Sevkiyat açıklaması <b>*</b></span><textarea name="reason" rows="3" required></textarea></label>
                     <div class="workflow-submit-group">
                         <button class="button button--block" type="submit" name="notify" value="0">Kargoya verildi olarak ilerlet</button>
-                        <button class="button button--secondary button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Kargoya verildi + WhatsApp</button>
+                        <button class="button button--whatsapp button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Kargoya verildi + WhatsApp</button>
                     </div>
                 </form>
             <?php endif; ?>
@@ -234,7 +242,7 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
                     <p class="workflow-action-note">Sipariş kargoya verildi. Ulaştığında son adımı tamamlayın.</p>
                     <div class="workflow-submit-group">
                         <button class="button button--block" type="submit" name="notify" value="0">Ulaştı olarak işaretle</button>
-                        <button class="button button--secondary button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Ulaştı + WhatsApp</button>
+                        <button class="button button--whatsapp button--block" type="submit" name="notify" value="1" <?= $hasWhatsapp ? '' : 'disabled' ?>>Ulaştı + WhatsApp</button>
                     </div>
                 </form>
             <?php endif; ?>

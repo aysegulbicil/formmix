@@ -109,7 +109,7 @@ class ReportService
 
     private function dailySales(array $filters): array
     {
-        $rows = $this->salesDocuments($filters)->select('DATE(sd.created_at) AS sale_date,COUNT(DISTINCT sd.id) AS order_count,SUM(sd.subtotal-sd.discount_total) AS net_sales,SUM(sd.grand_total) AS grand_total', false)->groupBy('DATE(sd.created_at)')->orderBy('sale_date')->get()->getResultArray();
+        $rows = $this->salesDocuments($filters)->select('MIN(sd.id) AS id,DATE(sd.created_at) AS sale_date,COUNT(DISTINCT sd.id) AS order_count,SUM(sd.subtotal-sd.discount_total) AS net_sales,SUM(sd.grand_total) AS grand_total', false)->groupBy('DATE(sd.created_at)')->orderBy('sale_date')->get()->getResultArray();
         foreach ($rows as &$row) {
             $row['order_count'] = (int) $row['order_count'];
             $row['net_sales'] = (float) $row['net_sales'];
@@ -120,19 +120,19 @@ class ReportService
 
     private function employeeSales(array $filters): array
     {
-        $rows = $this->salesDocuments($filters)->select("COALESCE(e.full_name,'Atanmamış') AS employee_name,COUNT(DISTINCT sd.id) AS order_count,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales,SUM(sdi.tax_amount) AS tax_total,SUM(sdi.line_total) AS grand_total", false)->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->join('employees e', 'e.id=sd.sales_employee_id', 'left')->groupBy('sd.sales_employee_id,e.full_name')->orderBy('net_sales', 'DESC')->get()->getResultArray();
+        $rows = $this->salesDocuments($filters)->select("sd.sales_employee_id AS id,COALESCE(e.full_name,'Atanmamış') AS employee_name,COUNT(DISTINCT sd.id) AS order_count,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales,SUM(sdi.tax_amount) AS tax_total,SUM(sdi.line_total) AS grand_total", false)->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->join('employees e', 'e.id=sd.sales_employee_id', 'left')->groupBy('sd.sales_employee_id,e.full_name')->orderBy('net_sales', 'DESC')->get()->getResultArray();
         return $this->numbers($rows, ['quantity', 'net_sales', 'tax_total', 'grand_total'], ['order_count']);
     }
 
     private function customerSales(array $filters): array
     {
-        $rows = $this->salesDocuments($filters)->select('c.company_name AS customer_name,COUNT(DISTINCT sd.id) AS order_count,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales,SUM(sdi.tax_amount) AS tax_total,SUM(sdi.line_total) AS grand_total', false)->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->join('customers c', 'c.id=sd.customer_id')->groupBy('sd.customer_id,c.company_name')->orderBy('net_sales', 'DESC')->get()->getResultArray();
+        $rows = $this->salesDocuments($filters)->select('sd.customer_id AS id,c.company_name AS customer_name,COUNT(DISTINCT sd.id) AS order_count,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales,SUM(sdi.tax_amount) AS tax_total,SUM(sdi.line_total) AS grand_total', false)->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->join('customers c', 'c.id=sd.customer_id')->groupBy('sd.customer_id,c.company_name')->orderBy('net_sales', 'DESC')->get()->getResultArray();
         return $this->numbers($rows, ['quantity', 'net_sales', 'tax_total', 'grand_total'], ['order_count']);
     }
 
     private function productSales(array $filters, bool $canViewCost): array
     {
-        $select = "sdi.product_name_snapshot AS product_name,sdi.variant_snapshot AS variant_name,pv.sku,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales";
+        $select = "sdi.product_variant_id AS id,sdi.product_name_snapshot AS product_name,sdi.variant_snapshot AS variant_name,pv.sku,SUM(sdi.quantity) AS quantity,SUM(sdi.net_amount) AS net_sales";
         if ($canViewCost) {
             $select .= ',SUM(sdi.quantity*COALESCE(pv.cost_price_override,p.cost_price,0)) AS cost_total';
         }
@@ -150,7 +150,7 @@ class ReportService
     private function attentionOrders(array $filters): array
     {
         $labels = ['approved' => 'Sipariş oluşturuldu', 'procurement_waiting' => 'Hazırlanıyor', 'partially_shipped' => 'Kısmi sevk'];
-        $query = $this->db->table('sales_documents sd')->select("sd.document_number,c.company_name AS customer_name,COALESCE(e.full_name,'Atanmamış') AS employee_name,sd.status,sd.created_at,sd.subtotal-sd.discount_total AS net_sales,SUM(sdi.quantity-sdi.fulfilled_quantity) AS remaining_quantity", false)->join('customers c', 'c.id=sd.customer_id')->join('employees e', 'e.id=sd.sales_employee_id', 'left')->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->where('sd.document_type', 'order')->whereIn('sd.status', array_keys($labels))->where('sd.deleted_at', null)->where('sd.created_at >=', $filters['from'].' 00:00:00')->where('sd.created_at <=', $filters['until'].' 23:59:59');
+        $query = $this->db->table('sales_documents sd')->select("sd.id,sd.document_number,c.company_name AS customer_name,COALESCE(e.full_name,'Atanmamış') AS employee_name,sd.status,sd.created_at,sd.subtotal-sd.discount_total AS net_sales,SUM(sdi.quantity-sdi.fulfilled_quantity) AS remaining_quantity", false)->join('customers c', 'c.id=sd.customer_id')->join('employees e', 'e.id=sd.sales_employee_id', 'left')->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->where('sd.document_type', 'order')->whereIn('sd.status', array_keys($labels))->where('sd.deleted_at', null)->where('sd.created_at >=', $filters['from'].' 00:00:00')->where('sd.created_at <=', $filters['until'].' 23:59:59');
         if ($filters['employee_id'] > 0) {
             $query->where('sd.sales_employee_id', $filters['employee_id']);
         }
@@ -165,7 +165,7 @@ class ReportService
 
     private function stock(): array
     {
-        $rows = $this->db->table('warehouses w')->select("w.name AS warehouse_name,p.name AS product_name,pv.sku,pv.size,pv.color,COALESCE(sb.on_hand_quantity,0) AS on_hand,COALESCE(sb.reserved_quantity,0) AS reserved,COALESCE(sb.on_hand_quantity,0)-COALESCE(sb.reserved_quantity,0) AS available,COALESCE(pv.critical_stock_level,p.critical_stock_level,0) AS threshold", false)->join('products p', 'p.track_stock=1 AND p.deleted_at IS NULL')->join('product_variants pv', 'pv.product_id=p.id AND pv.is_active=1 AND pv.deleted_at IS NULL')->join('stock_balances sb', 'sb.warehouse_id=w.id AND sb.product_variant_id=pv.id', 'left')->where('w.is_active', 1)->where('w.deleted_at', null)->where('p.is_active', 1)->orderBy('w.name')->orderBy('p.name')->orderBy('pv.sku')->get()->getResultArray();
+        $rows = $this->db->table('warehouses w')->select("pv.id,w.name AS warehouse_name,p.name AS product_name,pv.sku,pv.size,pv.color,COALESCE(sb.on_hand_quantity,0) AS on_hand,COALESCE(sb.reserved_quantity,0) AS reserved,COALESCE(sb.on_hand_quantity,0)-COALESCE(sb.reserved_quantity,0) AS available,COALESCE(pv.critical_stock_level,p.critical_stock_level,0) AS threshold", false)->join('products p', 'p.track_stock=1 AND p.deleted_at IS NULL')->join('product_variants pv', 'pv.product_id=p.id AND pv.is_active=1 AND pv.deleted_at IS NULL')->join('stock_balances sb', 'sb.warehouse_id=w.id AND sb.product_variant_id=pv.id', 'left')->where('w.is_active', 1)->where('w.deleted_at', null)->where('p.is_active', 1)->orderBy('w.name')->orderBy('p.name')->orderBy('pv.sku')->get()->getResultArray();
         foreach ($rows as &$row) {
             $row['variant_name'] = trim((string) ($row['size'] ?? '').' '.(string) ($row['color'] ?? '')) ?: 'Standart';
             unset($row['size'], $row['color']);
@@ -181,7 +181,7 @@ class ReportService
     private function commissions(array $filters): array
     {
         $labels = ['pending' => 'Bekleyen', 'earned' => 'Hak edilmiş', 'paid' => 'Ödendi', 'reversed' => 'Ters kayıt'];
-        $query = $this->db->table('commission_entries ce')->select('e.full_name AS employee_name,ce.status,COUNT(ce.id) AS entry_count,SUM(ce.base_amount) AS base_amount,SUM(ce.commission_amount) AS commission_amount', false)->join('employees e', 'e.id=ce.sales_employee_id')->join('sales_documents sd', 'sd.id=ce.sales_document_id')->where('sd.created_at >=', $filters['from'].' 00:00:00')->where('sd.created_at <=', $filters['until'].' 23:59:59');
+        $query = $this->db->table('commission_entries ce')->select('ce.sales_employee_id AS id,e.full_name AS employee_name,ce.status,COUNT(ce.id) AS entry_count,SUM(ce.base_amount) AS base_amount,SUM(ce.commission_amount) AS commission_amount', false)->join('employees e', 'e.id=ce.sales_employee_id')->join('sales_documents sd', 'sd.id=ce.sales_document_id')->where('sd.created_at >=', $filters['from'].' 00:00:00')->where('sd.created_at <=', $filters['until'].' 23:59:59');
         if ($filters['employee_id'] > 0) {
             $query->where('ce.sales_employee_id', $filters['employee_id']);
         }

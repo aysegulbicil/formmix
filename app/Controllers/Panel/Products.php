@@ -6,6 +6,7 @@ namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
 use App\Libraries\AuditLogger;
+use App\Libraries\TablePaginator;
 use App\Models\CustomerModel;
 use App\Models\CustomerPriceGroupModel;
 use App\Models\ProductCategoryModel;
@@ -36,7 +37,10 @@ class Products extends BaseController
         if ($status === 'aktif' || $status === 'pasif') {
             $model->where('products.is_active', $status === 'aktif' ? 1 : 0);
         }
-        $products = $model->orderBy('products.is_active', 'DESC')->orderBy('products.name')->findAll();
+        [$products, $pagination] = TablePaginator::paginateModel(
+            $model->orderBy('products.is_active', 'DESC')->orderBy('products.name'),
+            TablePaginator::state($this->request, 'products')
+        );
         $variants = new ProductVariantModel();
         foreach ($products as &$product) {
             $rows = $variants->select('size, color, preparation_type')->where('product_id', $product['id'])->where('is_active', 1)->findAll();
@@ -50,7 +54,7 @@ class Products extends BaseController
         }
         return view('panel/products/index', [
             'title' => 'Ürünler | FORMMIX', 'pageTitle' => 'Ürünler', 'activeNav' => 'products',
-            'products' => $products, 'categories' => (new ProductCategoryModel())->orderBy('name')->findAll(),
+            'products' => $products, 'pagination' => $pagination, 'categories' => (new ProductCategoryModel())->orderBy('name')->findAll(),
             'search' => $search, 'category' => $category, 'status' => $status,
             'canManage' => auth()->user()?->can('products.manage') ?? false, 'canViewCost' => $this->canViewCost(),
         ]);
@@ -153,9 +157,14 @@ class Products extends BaseController
 
     public function priceGroups(): string
     {
+        [$groups, $pagination] = TablePaginator::paginateModel(
+            (new CustomerPriceGroupModel())->orderBy('is_active', 'DESC')->orderBy('name'),
+            TablePaginator::state($this->request, 'price_groups')
+        );
+
         return view('panel/products/price_groups', [
             'title' => 'Fiyat Grupları | FORMMIX', 'pageTitle' => 'Müşteri fiyat grupları', 'activeNav' => 'products',
-            'groups' => (new CustomerPriceGroupModel())->orderBy('is_active', 'DESC')->orderBy('name')->findAll(),
+            'groups' => $groups, 'pagination' => $pagination,
         ]);
     }
 

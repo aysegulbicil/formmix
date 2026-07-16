@@ -6,6 +6,7 @@ namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
 use App\Libraries\AuditLogger;
+use App\Libraries\TablePaginator;
 use App\Models\EmployeeModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -43,9 +44,11 @@ class Employees extends BaseController
             $model->where('employees.is_active', $status === 'aktif' ? 1 : 0);
         }
 
-        $employees = $model->orderBy('employees.is_active', 'DESC')
-            ->orderBy('employees.full_name', 'ASC')
-            ->findAll();
+        $paginationState = TablePaginator::state($this->request, 'employees');
+        [$employees, $pagination] = TablePaginator::paginateModel(
+            $model->orderBy('employees.is_active', 'DESC')->orderBy('employees.full_name', 'ASC'),
+            $paginationState
+        );
 
         $roleMap = $this->roleMap(array_column($employees, 'user_id'));
         foreach ($employees as &$employee) {
@@ -60,6 +63,7 @@ class Employees extends BaseController
             'pageTitle' => 'Personel',
             'activeNav' => 'employees',
             'employees' => $employees,
+            'pagination' => $pagination,
             'search'    => $search,
             'status'    => $status,
             'stats'     => [
@@ -136,6 +140,22 @@ class Employees extends BaseController
         if ($canManageUsers && $account === 'new') {
             if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['login_email'] = 'Geçerli bir e-posta adresi yazın.';
+            } else {
+                $existingIdentity = db_connect()->table('auth_identities')
+                    ->select('user_id')
+                    ->where('type', 'email_password')
+                    ->where('secret', $email)
+                    ->get()
+                    ->getRowArray();
+
+                if ($existingIdentity) {
+                    $linkedEmployee = (new EmployeeModel())
+                        ->where('user_id', (int) $existingIdentity['user_id'])
+                        ->first();
+                    $errors['login_email'] = $linkedEmployee
+                        ? 'Bu e-posta adresi başka bir personele bağlı. Farklı bir e-posta kullanın.'
+                        : 'Bu e-posta adresi zaten kayıtlı. Yeni hesap oluşturmak yerine “Kullanıcı hesabı” listesinden mevcut hesabı seçin.';
+                }
             }
             if (mb_strlen($password) < 6) {
                 $errors['login_password'] = 'Parola en az 6 karakter olmalıdır.';
@@ -210,7 +230,12 @@ class Employees extends BaseController
             $db->transCommit();
         } catch (Throwable $exception) {
             $db->transRollback();
-            return redirect()->back()->withInput()->with('errors', ['form' => $exception->getMessage()]);
+            $message = $exception->getMessage();
+            if (str_contains($message, 'auth_identities.type_secret') || str_contains($message, "Duplicate entry 'email_password-")) {
+                $message = 'Bu e-posta adresi zaten kayıtlı. Yeni hesap oluşturmak yerine “Kullanıcı hesabı” listesinden mevcut hesabı seçin.';
+            }
+
+            return redirect()->back()->withInput()->with('errors', ['form' => $message]);
         }
 
         $fresh = (new EmployeeModel())->find($id);

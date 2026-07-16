@@ -7,6 +7,14 @@ $qty = static function (float $value): string {
 
     return number_format($value, $decimals, ',', '.');
 };
+[$balances, $balancesPagination] = \App\Libraries\TablePaginator::paginateArray(
+    $balances,
+    \App\Libraries\TablePaginator::state(service('request'), 'stock_balances')
+);
+[$movements, $movementsPagination] = \App\Libraries\TablePaginator::paginateArray(
+    $movements,
+    \App\Libraries\TablePaginator::state(service('request'), 'stock_movements')
+);
 ?>
 <div class="page-actions">
     <div>
@@ -21,7 +29,7 @@ $qty = static function (float $value): string {
 <div class="stats-grid">
     <article class="stat-card">
         <span>Takip edilen varyant</span>
-        <strong><?= count($balances) ?></strong>
+        <strong><?= number_format($balancesPagination['total'], 0, ',', '.') ?></strong>
         <small>Seçili depoda</small>
     </article>
     <article class="stat-card">
@@ -55,6 +63,7 @@ $qty = static function (float $value): string {
     <div class="table-wrap">
         <table class="data-table stock-table">
             <colgroup>
+                <col class="stock-table__id-col">
                 <col class="stock-table__product-col">
                 <col class="stock-table__qty-col">
                 <col class="stock-table__qty-col">
@@ -63,6 +72,7 @@ $qty = static function (float $value): string {
             </colgroup>
             <thead>
                 <tr>
+                    <th class="stock-table__id">ID</th>
                     <th class="stock-table__product">Ürün / varyant</th>
                     <th class="stock-table__qty">Mevcut</th>
                     <th class="stock-table__qty">Ayrılmış</th>
@@ -73,6 +83,7 @@ $qty = static function (float $value): string {
             <tbody>
                 <?php foreach ($balances as $row): ?>
                     <tr>
+                        <td class="stock-table__id" data-label="ID"><?= (int) $row['variant_id'] ?></td>
                         <td class="stock-table__product" data-label="Ürün">
                             <strong><?= esc($row['product_name']) ?></strong>
                             <span class="cell-note"><?= esc($row['sku'].' · '.implode(' / ', array_filter([$row['size'], $row['color']]))) ?></span>
@@ -97,6 +108,7 @@ $qty = static function (float $value): string {
             <p>Bu depoda henüz görüntülenecek stok hareketi bulunmuyor.</p>
         </div>
     <?php endif; ?>
+    <?= view('components/table_pagination', ['pagination' => $balancesPagination]) ?>
 </section>
 
 <section class="panel-card">
@@ -155,6 +167,7 @@ $qty = static function (float $value): string {
         <table class="data-table">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Hareket</th>
                     <th>Ürün</th>
                     <th>Depo</th>
@@ -167,6 +180,7 @@ $qty = static function (float $value): string {
             <tbody>
                 <?php foreach ($movements as $row): ?>
                     <tr>
+                        <td data-label="ID"><?= (int) $row['id'] ?></td>
                         <td data-label="Hareket">
                             <strong><?= esc($row['movement_number']) ?></strong>
                             <span class="cell-note"><?= esc($movementLabels[$row['movement_type']] ?? $row['movement_type']) ?></span>
@@ -188,5 +202,6 @@ $qty = static function (float $value): string {
             </tbody>
         </table>
     </div>
+    <?= view('components/table_pagination', ['pagination' => $movementsPagination]) ?>
 </section>
 <?= $this->endSection() ?>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
+use App\Libraries\TablePaginator;
 use App\Services\ReportService;
 use App\Services\SpreadsheetExporter;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -17,13 +18,23 @@ class Reports extends BaseController
         $filters = $service->filters($this->request->getGet());
         $canViewCost = auth()->user()?->can('products.view-cost') ?? false;
 
+        $report = $service->report($filters, $canViewCost);
+        $paginations = [];
+        foreach (['daily', 'employees', 'customers', 'products', 'orders', 'stock', 'commissions'] as $section) {
+            [$report[$section], $paginations[$section]] = TablePaginator::paginateArray(
+                $report[$section],
+                TablePaginator::state($this->request, 'report_' . $section)
+            );
+        }
+
         return view('panel/reports/index', [
             'title' => 'Raporlar | FORMMIX',
             'pageTitle' => 'Raporlar',
             'activeNav' => 'reports',
             'filters' => $filters,
             'employees' => $service->employees(),
-            'report' => $service->report($filters, $canViewCost),
+            'report' => $report,
+            'paginations' => $paginations,
             'canViewCost' => $canViewCost,
         ]);
     }

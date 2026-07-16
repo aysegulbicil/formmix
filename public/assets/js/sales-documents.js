@@ -86,7 +86,7 @@
     const storageKey = () => `formmix-sales-draft-${reference.value}`;
     let lines = [];
     const setState = text => { stateNode.textContent = text; };
-    const serialize = () => ({document_type:documentType,customer_id: customer.value, delivery_address: form.delivery_address.value, requested_delivery_date: form.requested_delivery_date.value, notes: form.notes.value, sales_employee_id: form.sales_employee_id?.value || '', lines});
+    const serialize = () => ({document_type:documentType,customer_id: customer.value, delivery_address: form.delivery_address.value, requested_delivery_date: form.requested_delivery_date.value, notes: form.notes.value, sales_employee_id: form.sales_employee_id?.value || '', preparation_employee_id: form.preparation_employee_id?.value || '', design_employee_id: form.design_employee_id?.value || '', print_employee_id: form.print_employee_id?.value || '', lines});
     const saveLocal = () => { localStorage.setItem(storageKey(), JSON.stringify(serialize())); setState(navigator.onLine ? 'Cihazda kaydedildi' : 'Bağlantı yok · cihazda kaydedildi'); };
     const totals = () => {
         let subtotal=0, discount=0, tax=0, grand=0;
@@ -123,6 +123,6 @@
     window.addEventListener('offline',()=>setState('Bağlantı yok · taslak cihazda korunuyor'));window.addEventListener('online',()=>setState('Bağlantı geri geldi · göndermeye hazır'));
     const saved=localStorage.getItem(storageKey());
     if(initial.length){lines=initial.map(item=>({product_id:Number(item.product_id),product_variant_id:Number(item.product_variant_id),quantity:Number(item.quantity),discount_percent:Number(item.discount_percent),unit_price:Number(item.unit_price),tax_rate:Number(item.tax_rate),product_name_snapshot:item.product_name_snapshot,variant_snapshot:item.variant_snapshot,product_code_snapshot:item.product_code_snapshot}));}
-    else if(saved){try{const draft=JSON.parse(saved);customer.value=draft.customer_id||customer.value;form.delivery_address.value=draft.delivery_address||'';form.requested_delivery_date.value=draft.requested_delivery_date||'';form.notes.value=draft.notes||'';if(form.sales_employee_id)form.sales_employee_id.value=draft.sales_employee_id||'';lines=Array.isArray(draft.lines)?draft.lines:[];setState('Cihazdaki taslak geri yüklendi');}catch{localStorage.removeItem(storageKey());}}
+    else if(saved){try{const draft=JSON.parse(saved);customer.value=draft.customer_id||customer.value;form.delivery_address.value=draft.delivery_address||'';form.requested_delivery_date.value=draft.requested_delivery_date||'';form.notes.value=draft.notes||'';if(form.sales_employee_id)form.sales_employee_id.value=draft.sales_employee_id||'';if(form.preparation_employee_id)form.preparation_employee_id.value=draft.preparation_employee_id||'';if(form.design_employee_id)form.design_employee_id.value=draft.design_employee_id||'';if(form.print_employee_id)form.print_employee_id.value=draft.print_employee_id||'';lines=Array.isArray(draft.lines)?draft.lines:[];setState('Cihazdaki taslak geri yüklendi');}catch{localStorage.removeItem(storageKey());}}
     render();
 })();

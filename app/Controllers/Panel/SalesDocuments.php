@@ -6,6 +6,7 @@ namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
 use App\Libraries\AuditLogger;
+use App\Libraries\TablePaginator;
 use App\Models\CustomerModel;
 use App\Models\EmployeeModel;
 use App\Models\ProductModel;
@@ -52,9 +53,12 @@ class SalesDocuments extends BaseController
         $until = (string) $this->request->getGet('bitis');
 
         $model = new SalesDocumentModel();
-        $model->select('sales_documents.*,customers.company_name,employees.full_name AS sales_employee_name')
+        $model->select('sales_documents.*,customers.company_name,sales_employee.full_name AS sales_employee_name,preparation_employee.full_name AS preparation_employee_name,design_employee.full_name AS design_employee_name,print_employee.full_name AS print_employee_name')
             ->join('customers', 'customers.id=sales_documents.customer_id')
-            ->join('employees', 'employees.id=sales_documents.sales_employee_id', 'left');
+            ->join('employees sales_employee', 'sales_employee.id=sales_documents.sales_employee_id', 'left')
+            ->join('employees preparation_employee', 'preparation_employee.id=sales_documents.preparation_employee_id', 'left')
+            ->join('employees design_employee', 'design_employee.id=sales_documents.design_employee_id', 'left')
+            ->join('employees print_employee', 'print_employee.id=sales_documents.print_employee_id', 'left');
 
         $this->applyVisibility($model);
 
@@ -70,7 +74,12 @@ class SalesDocuments extends BaseController
         }
 
         if ($employee > 0 && $this->canViewAll()) {
-            $model->where('sales_documents.sales_employee_id', $employee);
+            $model->groupStart()
+                ->where('sales_documents.sales_employee_id', $employee)
+                ->orWhere('sales_documents.preparation_employee_id', $employee)
+                ->orWhere('sales_documents.design_employee_id', $employee)
+                ->orWhere('sales_documents.print_employee_id', $employee)
+                ->groupEnd();
         }
 
         if ($from !== '') {
@@ -81,11 +90,17 @@ class SalesDocuments extends BaseController
             $model->where('sales_documents.created_at <=', $until.' 23:59:59');
         }
 
+        [$documents, $pagination] = TablePaginator::paginateModel(
+            $model->orderBy('sales_documents.created_at', 'DESC'),
+            TablePaginator::state($this->request, 'orders')
+        );
+
         return view('panel/sales_documents/index', [
             'title' => 'Teklif ve Siparisler | FORMMIX',
             'pageTitle' => 'Teklif ve siparisler',
             'activeNav' => 'orders',
-            'documents' => $model->orderBy('sales_documents.created_at', 'DESC')->findAll(),
+            'documents' => $documents,
+            'pagination' => $pagination,
             'types' => self::TYPES,
             'statuses' => self::STATUSES,
             'employees' => $this->activeEmployees(),
@@ -429,6 +444,12 @@ class SalesDocuments extends BaseController
         $status = $type === 'order' && $intent === 'submit' ? 'approved' : 'draft';
         $approvedAt = $status === 'approved' ? date('Y-m-d H:i:s') : null;
 
+        try {
+            $productionAssignees = $this->resolveProductionAssignees($type, $status);
+        } catch (RuntimeException $e) {
+            return redirect()->back()->withInput()->with('errors', ['assignees' => $e->getMessage()]);
+        }
+
         $data = [
             'document_number' => $document['document_number'] ?? $this->newNumber($type),
             'document_type' => $type,
@@ -436,6 +457,9 @@ class SalesDocuments extends BaseController
             'customer_id' => $customer['id'],
             'customer_owner_employee_id' => $customer['current_owner_employee_id'] ?: null,
             'sales_employee_id' => $salesEmployee,
+            'preparation_employee_id' => $productionAssignees['preparation_employee_id'],
+            'design_employee_id' => $productionAssignees['design_employee_id'],
+            'print_employee_id' => $productionAssignees['print_employee_id'],
             'created_by_user_id' => $document['created_by_user_id'] ?? auth()->id(),
             'approved_by_user_id' => $status === 'approved' ? auth()->id() : null,
             'status' => $status,
@@ -600,9 +624,12 @@ class SalesDocuments extends BaseController
     private function visibleDocument(int $id): array
     {
         $model = new SalesDocumentModel();
-        $model->select('sales_documents.*,customers.company_name,employees.full_name AS sales_employee_name')
+        $model->select('sales_documents.*,customers.company_name,sales_employee.full_name AS sales_employee_name,preparation_employee.full_name AS preparation_employee_name,design_employee.full_name AS design_employee_name,print_employee.full_name AS print_employee_name')
             ->join('customers', 'customers.id=sales_documents.customer_id')
-            ->join('employees', 'employees.id=sales_documents.sales_employee_id', 'left');
+            ->join('employees sales_employee', 'sales_employee.id=sales_documents.sales_employee_id', 'left')
+            ->join('employees preparation_employee', 'preparation_employee.id=sales_documents.preparation_employee_id', 'left')
+            ->join('employees design_employee', 'design_employee.id=sales_documents.design_employee_id', 'left')
+            ->join('employees print_employee', 'print_employee.id=sales_documents.print_employee_id', 'left');
         $this->applyVisibility($model);
         $doc = $model->find($id);
 
@@ -616,7 +643,13 @@ class SalesDocuments extends BaseController
     private function applyVisibility(SalesDocumentModel $model): void
     {
         if (! $this->canViewAll()) {
-            $model->where('sales_documents.sales_employee_id', $this->currentEmployeeId() ?? 0);
+            $employeeId = $this->currentEmployeeId() ?? 0;
+            $model->groupStart()
+                ->where('sales_documents.sales_employee_id', $employeeId)
+                ->orWhere('sales_documents.preparation_employee_id', $employeeId)
+                ->orWhere('sales_documents.design_employee_id', $employeeId)
+                ->orWhere('sales_documents.print_employee_id', $employeeId)
+                ->groupEnd();
         }
 
         if ((auth()->user()?->can('orders.fulfill') ?? false) && ! (auth()->user()?->can('orders.approve') ?? false)) {
@@ -635,6 +668,32 @@ class SalesDocuments extends BaseController
         return $customer['current_owner_employee_id']
             ? (int) $customer['current_owner_employee_id']
             : $this->currentEmployeeId();
+    }
+
+    /** @return array{preparation_employee_id: ?int, design_employee_id: ?int, print_employee_id: ?int} */
+    private function resolveProductionAssignees(string $type, string $status): array
+    {
+        $fields = [
+            'preparation_employee_id' => 'Siparişi hazırlayacak personel',
+            'design_employee_id' => 'Tasarımı yapacak personel',
+            'print_employee_id' => 'Baskıyı yapacak personel',
+        ];
+        $resolved = [];
+        $employees = new EmployeeModel();
+
+        foreach ($fields as $field => $label) {
+            $employeeId = $type === 'order' ? (int) $this->request->getPost($field) : 0;
+            if ($employeeId > 0 && ! $employees->where('is_active', 1)->find($employeeId)) {
+                throw new RuntimeException($label.' geçerli ve aktif bir personel olmalıdır.');
+            }
+            if ($type === 'order' && $status === 'approved' && $employeeId < 1) {
+                throw new RuntimeException($label.' seçilmelidir.');
+            }
+
+            $resolved[$field] = $employeeId > 0 ? $employeeId : null;
+        }
+
+        return $resolved;
     }
 
     private function history(int $id, ?string $old, string $new, ?string $reason): void
@@ -702,7 +761,10 @@ class SalesDocuments extends BaseController
 
     private function requireViewAccess(): void
     {
-        if (! $this->canCreate() && ! $this->canViewAll() && ! (auth()->user()?->can('orders.fulfill') ?? false)) {
+        if (! $this->canCreate()
+            && ! $this->canViewAll()
+            && ! (auth()->user()?->can('orders.fulfill') ?? false)
+            && $this->currentEmployeeId() === null) {
             throw PageNotFoundException::forPageNotFound();
         }
     }

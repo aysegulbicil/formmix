@@ -12,7 +12,7 @@ $accountValue = old('account_user_id', $employee['user_id'] ?? '');
 </div>
 
 <?php if ($errors): ?>
-    <div class="alert alert--error" role="alert"><strong>Formu kontrol edin.</strong><span><?= esc($errors['form'] ?? 'Eksik veya hatalı alanlar bulunuyor.') ?></span></div>
+    <div class="alert alert--error" role="alert"><strong>Personel kaydedilemedi.</strong><span><?= esc($errors['form'] ?? (reset($errors) ?: 'Eksik veya hatalı alanlar bulunuyor.')) ?></span></div>
 <?php endif; ?>
 
 <form method="post" action="<?= $isEdit ? site_url('panel/personel/' . $employee['id'] . '/duzenle') : site_url('panel/personel/yeni') ?>" class="employee-form">

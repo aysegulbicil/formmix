@@ -40,10 +40,11 @@
     <?php else: ?>
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Personel</th><th>Görev</th><th>Satış yetkisi</th><th>Hesap</th><th>Durum</th><th><span class="sr-only">İşlemler</span></th></tr></thead>
+                <thead><tr><th>ID</th><th>Personel</th><th>Görev</th><th>Satış yetkisi</th><th>Hesap</th><th>Durum</th><th><span class="sr-only">İşlemler</span></th></tr></thead>
                 <tbody>
                 <?php foreach ($employees as $item): ?>
                     <tr>
+                        <td data-label="ID"><?= (int) $item['id'] ?></td>
                         <td data-label="Personel"><div class="person-cell"><span class="person-avatar"><?= esc(mb_strtoupper(mb_substr($item['full_name'], 0, 1))) ?></span><div><strong><?= esc($item['full_name']) ?></strong><small><?= esc($item['employee_code']) ?><?= $item['phone'] ? ' · ' . esc($item['phone']) : '' ?></small></div></div></td>
                         <td data-label="Görev"><?= $item['role_title'] ? '<span class="role-pill">' . esc($item['role_title']) . '</span>' : '<span class="muted">Atanmadı</span>' ?></td>
                         <td data-label="Satış yetkisi"><strong>%<?= esc(rtrim(rtrim(number_format((float) $item['max_discount_percent'], 2, ',', '.'), '0'), ',')) ?></strong><small class="cell-note"><?= $item['can_collect_payment'] ? 'Tahsilat bildirimi açık' : 'Tahsilat bildirimi kapalı' ?></small></td>
@@ -60,5 +61,6 @@
             </table>
         </div>
     <?php endif; ?>
+    <?= view('components/table_pagination', ['pagination' => $pagination]) ?>
 </section>
 <?= $this->endSection() ?>

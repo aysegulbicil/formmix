@@ -58,6 +58,59 @@
         checkAll.checked = checkItems.length > 0 && checkItems.every(box => box.checked);
         checkAll.indeterminate = !checkAll.checked && checkItems.some(box => box.checked);
     }));
+
+    document.querySelectorAll('[data-table-per-page]').forEach(select => {
+        select.addEventListener('change', () => {
+            const url = new URL(window.location.href);
+            url.searchParams.set(select.dataset.perPageParam, select.value);
+            url.searchParams.delete(select.dataset.pageParam);
+            window.location.assign(url.toString());
+        });
+    });
+
+    const numericTableLabels = new Set([
+        'Miktar', 'Mevcut', 'Ayrılmış', 'Kullanılabilir', 'Kalan', 'Tutar',
+        'Toplam', 'Genel toplam', 'Net satış', 'Maliyet', 'Brüt kâr', 'Prim',
+        'Matrah', 'Oran', 'İndirim', 'Birim fiyat', 'Vergi', 'Liste fiyatı',
+        'Alış fiyatı', 'Fiyat', 'Özel fiyat', 'Kabul', 'Bu kabul',
+    ]);
+
+    document.querySelectorAll('.data-table').forEach(table => {
+        const headers = [...table.querySelectorAll('thead th')];
+        table.querySelectorAll('tbody td:not([colspan])').forEach(cell => {
+            const header = headers[cell.cellIndex];
+            const label = cell.dataset.label?.trim() ?? '';
+            if (!header || !label) return;
+
+            if (label === 'ID') {
+                cell.textContent = cell.textContent.trim().replace(/^#/, '');
+                cell.classList.add('table-column--id');
+                header.classList.add('table-column--id');
+            } else if (numericTableLabels.has(label)) {
+                cell.classList.add('table-column--number');
+                header.classList.add('table-column--number');
+            } else if (label === 'İşlem') {
+                cell.classList.add('table-column--action');
+                header.classList.add('table-column--action');
+            }
+        });
+    });
+
+    document.querySelectorAll('form.filter-bar[method="get"], form.filter-bar:not([method])').forEach(form => {
+        form.addEventListener('submit', () => {
+            const current = new URL(window.location.href);
+            current.searchParams.forEach((value, key) => {
+                if (key !== 'per_page' && !key.endsWith('_per_page')) return;
+                if (form.querySelector(`[name="${key}"]`)) return;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            });
+        });
+    });
+
     const movementType = document.querySelector('[data-movement-type]');
     const targetWarehouse = document.querySelector('[data-target-warehouse]');
     const syncMovement = () => { if (targetWarehouse) targetWarehouse.hidden = movementType?.value !== 'transfer'; };

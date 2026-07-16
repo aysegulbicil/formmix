@@ -27,11 +27,12 @@
             <?= csrf_field() ?>
             <div class="table-wrap">
                 <table class="data-table product-table">
-                    <thead><tr><?php if ($canManage): ?><th class="check-cell"><input type="checkbox" data-check-all aria-label="Tüm ürünleri seç"></th><?php endif; ?><th>Ürün</th><th>Kategori</th><th>Liste fiyatı</th><?php if ($canViewCost): ?><th>Alış fiyatı</th><?php endif; ?><th>Seçenekler</th><th>Durum</th><th><span class="sr-only">İşlem</span></th></tr></thead>
+                    <thead><tr><?php if ($canManage): ?><th class="check-cell"><input type="checkbox" data-check-all aria-label="Tüm ürünleri seç"></th><?php endif; ?><th>ID</th><th>Ürün</th><th>Kategori</th><th>Liste fiyatı</th><?php if ($canViewCost): ?><th>Alış fiyatı</th><?php endif; ?><th>Seçenekler</th><th>Durum</th><th><span class="sr-only">İşlem</span></th></tr></thead>
                     <tbody>
                     <?php foreach ($products as $item): ?>
                         <tr>
                             <?php if ($canManage): ?><td class="check-cell" data-label="Seç"><input type="checkbox" name="product_ids[]" value="<?= esc($item['id']) ?>" data-check-item aria-label="<?= esc($item['name']) ?> ürününü seç"></td><?php endif; ?>
+                            <td data-label="ID"><?= (int) $item['id'] ?></td>
                             <td data-label="Ürün"><div class="product-cell"><?php if ($item['image_path']): ?><img src="<?= base_url($item['image_path']) ?>" alt=""><?php else: ?><span>Ü</span><?php endif; ?><div><strong><?= esc($item['name']) ?></strong><small><?= esc($item['product_code']) ?></small></div></div></td>
                             <td data-label="Kategori"><?= esc($item['category_name'] ?? 'Kategorisiz') ?></td>
                             <td data-label="Liste fiyatı"><?php if ((float) $item['list_price'] > 0): ?><strong><?= number_format((float) $item['list_price'], 2, ',', '.') ?> ₺</strong><small class="cell-note">Vergi hariç · KDV %<?= esc(rtrim(rtrim((string) $item['tax_rate'], '0'), '.')) ?></small><?php else: ?><span class="badge badge--warning">Fiyat bekliyor</span><?php endif; ?></td>
@@ -61,5 +62,6 @@
             <?php endforeach; ?>
         <?php endif; ?>
     <?php endif; ?>
+    <?= view('components/table_pagination', ['pagination' => $pagination]) ?>
 </section>
 <?= $this->endSection() ?>
