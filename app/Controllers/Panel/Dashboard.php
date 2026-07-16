@@ -12,8 +12,8 @@ class Dashboard extends BaseController
 {
     public function index(): string
     {
-        $pendingOrderCount = (auth()->user()?->can('orders.approve') ?? false)
-            ? (new SalesDocumentModel())->where('status', 'pending_approval')->countAllResults()
+        $pendingOrderCount = (auth()->user()?->can('orders.fulfill') ?? false)
+            ? (new SalesDocumentModel())->whereIn('status', ['approved', 'procurement_waiting', 'reserved', 'partially_shipped'])->countAllResults()
             : 0;
         $dashboardMetrics = (auth()->user()?->can('reports.view') ?? false)
             ? (new ReportService())->dashboard()

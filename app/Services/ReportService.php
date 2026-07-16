@@ -53,7 +53,7 @@ class ReportService
         return [
             'monthNetSales' => $summary['net_sales'],
             'monthOrderCount' => $summary['order_count'],
-            'pendingApprovalCount' => count(array_filter($orders, static fn ($row) => $row['status'] === 'pending_approval')),
+            'openOrderCount' => count(array_filter($orders, static fn ($row) => in_array($row['status'], ['approved', 'procurement_waiting', 'partially_shipped'], true))),
             'procurementWaitingCount' => count(array_filter($orders, static fn ($row) => $row['status'] === 'procurement_waiting')),
             'partiallyShippedCount' => count(array_filter($orders, static fn ($row) => $row['status'] === 'partially_shipped')),
             'criticalStockCount' => count(array_filter($stock, static fn ($row) => $row['is_critical'])),
@@ -149,7 +149,7 @@ class ReportService
 
     private function attentionOrders(array $filters): array
     {
-        $labels = ['draft' => 'Taslak / bekleyen', 'pending_approval' => 'Onay bekliyor', 'procurement_waiting' => 'Tedarik bekliyor', 'partially_shipped' => 'Kısmi sevk'];
+        $labels = ['approved' => 'Sipariş oluşturuldu', 'procurement_waiting' => 'Hazırlanıyor', 'partially_shipped' => 'Kısmi sevk'];
         $query = $this->db->table('sales_documents sd')->select("sd.document_number,c.company_name AS customer_name,COALESCE(e.full_name,'Atanmamış') AS employee_name,sd.status,sd.created_at,sd.subtotal-sd.discount_total AS net_sales,SUM(sdi.quantity-sdi.fulfilled_quantity) AS remaining_quantity", false)->join('customers c', 'c.id=sd.customer_id')->join('employees e', 'e.id=sd.sales_employee_id', 'left')->join('sales_document_items sdi', 'sdi.sales_document_id=sd.id')->where('sd.document_type', 'order')->whereIn('sd.status', array_keys($labels))->where('sd.deleted_at', null)->where('sd.created_at >=', $filters['from'].' 00:00:00')->where('sd.created_at <=', $filters['until'].' 23:59:59');
         if ($filters['employee_id'] > 0) {
             $query->where('sd.sales_employee_id', $filters['employee_id']);

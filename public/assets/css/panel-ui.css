@@ -5,6 +5,238 @@
     --panel-cell-y: 13px;
 }
 
+.order-progress-card {
+    margin-bottom: 22px;
+}
+
+.badge--danger {
+    background: #fff0f1;
+    color: var(--danger);
+}
+
+.sales-items-table {
+    table-layout: fixed;
+}
+
+.sales-items-table__product-col {
+    width: 30%;
+}
+
+.sales-items-table__quantity-col {
+    width: 12%;
+}
+
+.sales-items-table__price-col {
+    width: 17%;
+}
+
+.sales-items-table__discount-col,
+.sales-items-table__tax-col {
+    width: 12%;
+}
+
+.sales-items-table__total-col {
+    width: 17%;
+}
+
+.sales-items-table th.sales-items-table__product,
+.sales-items-table td.sales-items-table__product {
+    text-align: left;
+}
+
+.sales-items-table th.sales-items-table__quantity,
+.sales-items-table td.sales-items-table__quantity {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.sales-items-table th.sales-items-table__number,
+.sales-items-table td.sales-items-table__number {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.order-progress-card__head {
+    padding: 18px 20px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.order-progress-card__head h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 18px;
+}
+
+.order-progress-card__head p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.order-progress {
+    margin: 0;
+    padding: 20px 18px 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    overflow-x: auto;
+    list-style: none;
+}
+
+.order-progress__step {
+    position: relative;
+    min-width: 0;
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    color: #8b9aa7;
+    text-align: center;
+}
+
+.order-progress__step + .order-progress__step::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 50%;
+    width: 100%;
+    height: 3px;
+    background: #dce4ea;
+}
+
+.order-progress__step.is-complete + .order-progress__step::before,
+.order-progress__step.is-current::before {
+    background: var(--success);
+}
+
+.order-progress__marker {
+    position: relative;
+    z-index: 1;
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    border: 3px solid #dce4ea;
+    border-radius: 50%;
+    background: #fff;
+    color: #7c8c99;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.order-progress__step.is-complete .order-progress__marker {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+}
+
+.order-progress__step.is-current .order-progress__marker {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 5px rgba(242, 106, 33, .12);
+    color: var(--orange-dark);
+}
+
+.order-progress__step.is-complete strong,
+.order-progress__step.is-current strong {
+    color: var(--navy);
+}
+
+.order-progress__step strong {
+    font-size: 13px;
+}
+
+.order-progress__step small {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.order-progress-card.is-cancelled .order-progress {
+    opacity: .55;
+}
+
+.order-history-details {
+    border-top: 1px solid var(--line);
+}
+
+.order-history-details summary {
+    padding: 13px 20px;
+    cursor: pointer;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.order-history-details .assignment-list {
+    padding: 0 20px 18px;
+}
+
+.workflow-actions-card h2 {
+    margin-bottom: 18px;
+}
+
+.workflow-submit-group {
+    display: grid;
+    gap: 9px;
+}
+
+.workflow-action-note {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #d8e5ec;
+    border-radius: 10px;
+    background: #f7fafc;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.workflow-complete {
+    padding: 16px;
+    display: grid;
+    gap: 3px;
+    border: 1px solid #cbe8dc;
+    border-radius: 11px;
+    background: #eef9f4;
+    color: var(--success);
+}
+
+.workflow-complete span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.cancel-form {
+    margin-top: 20px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid var(--line) !important;
+}
+
+.whatsapp-ready {
+    justify-content: space-between;
+}
+
+@media (max-width: 700px) {
+    .order-progress-card__head {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px 16px 6px;
+    }
+
+    .order-progress {
+        padding-inline: 8px;
+        grid-template-columns: repeat(4, minmax(112px, 1fr));
+    }
+
+    .whatsapp-ready {
+        align-items: stretch;
+    }
+
+    .whatsapp-ready .button {
+        width: 100%;
+    }
+}
+
 .content {
     width: 100%;
     max-width: 1760px;
@@ -100,6 +332,35 @@
 .data-table td[data-label="İndirim"] {
     font-variant-numeric: tabular-nums;
     text-align: right;
+}
+
+/* Stock overview: one shared column grid for headings and row values. */
+.stock-table {
+    table-layout: fixed;
+}
+
+.stock-table__product-col {
+    width: 40%;
+}
+
+.stock-table__qty-col {
+    width: 17%;
+}
+
+.stock-table__status-col {
+    width: 9%;
+}
+
+.stock-table th.stock-table__product,
+.stock-table td.stock-table__product {
+    text-align: left;
+}
+
+.stock-table th.stock-table__qty,
+.stock-table td.stock-table__qty,
+.stock-table th.stock-table__status,
+.stock-table td.stock-table__status {
+    text-align: center;
 }
 
 .data-table td[colspan] {
@@ -218,6 +479,11 @@
 
     .data-table td[colspan]::before {
         display: none;
+    }
+
+    .stock-table td.stock-table__qty,
+    .stock-table td.stock-table__status {
+        text-align: right;
     }
 
     .section-heading-inline,

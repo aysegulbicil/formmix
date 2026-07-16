@@ -68,6 +68,7 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
         $routes->get('(:num)/duzenle', 'Panel\\SalesDocuments::edit/$1', ['filter' => 'permission:orders.create']);
         $routes->post('(:num)/duzenle', 'Panel\\SalesDocuments::update/$1', ['filter' => 'permission:orders.create']);
         $routes->post('(:num)/gonder', 'Panel\\SalesDocuments::submit/$1', ['filter' => 'permission:orders.create']);
+        $routes->post('(:num)/surec', 'Panel\\SalesDocuments::progress/$1');
         $routes->post('(:num)/onayla', 'Panel\\SalesDocuments::approve/$1', ['filter' => 'permission:orders.approve']);
         $routes->post('(:num)/reddet', 'Panel\\SalesDocuments::reject/$1', ['filter' => 'permission:orders.approve']);
         $routes->post('(:num)/iptal', 'Panel\\SalesDocuments::cancel/$1');

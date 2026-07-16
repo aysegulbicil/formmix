@@ -1,12 +1,192 @@
 <?= $this->extend('layouts/panel') ?>
 <?= $this->section('content') ?>
-<?php $errors=session('errors')??[]; ?>
-<div class="page-actions"><div><p class="page-lead">Varyant bazında mevcut, ayrılmış ve kullanılabilir stoğu izleyin.</p></div><div class="action-group"><a class="button button--secondary" href="<?= site_url('panel/tedarikciler') ?>">Tedarikçiler</a><a class="button" href="<?= site_url('panel/alislar') ?>">Alış siparişleri</a></div></div>
-<?php if($errors): ?><div class="alert alert--error"><strong>İşlem tamamlanamadı.</strong><span><?= esc(reset($errors)) ?></span></div><?php endif; ?>
-<div class="stats-grid"><article class="stat-card"><span>Takip edilen varyant</span><strong><?= count($balances) ?></strong><small>Seçili depoda</small></article><article class="stat-card"><span>Kritik stok</span><strong><?= $criticalCount ?></strong><small><?= $criticalCount?'İşlem gerekiyor':'Eşik altında ürün yok' ?></small></article><article class="stat-card"><span>Depo</span><strong><?= count($warehouses) ?></strong><small>Aktif stok alanı</small></article></div>
-<section class="panel-card"><form class="filter-bar" method="get"><select name="depo" onchange="this.form.submit()" aria-label="Depo"><?php foreach($warehouses as $warehouse): ?><option value="<?= $warehouse['id'] ?>" <?= (int)$warehouseId===(int)$warehouse['id']?'selected':'' ?>><?= esc($warehouse['name']) ?></option><?php endforeach; ?></select></form><div class="table-wrap"><table class="data-table"><thead><tr><th>Ürün / varyant</th><th>Mevcut</th><th>Ayrılmış</th><th>Kullanılabilir</th><th>Durum</th></tr></thead><tbody><?php foreach($balances as $row): ?><tr><td data-label="Ürün"><strong><?= esc($row['product_name']) ?></strong><span class="cell-note"><?= esc($row['sku'].' · '.implode(' / ',array_filter([$row['size'],$row['color']]))) ?></span></td><td data-label="Mevcut"><?= number_format((float)$row['on_hand_quantity'],3,',','.') ?></td><td data-label="Ayrılmış"><?= number_format((float)$row['reserved_quantity'],3,',','.') ?></td><td data-label="Kullanılabilir"><strong><?= number_format((float)$row['available_quantity'],3,',','.') ?></strong></td><td data-label="Durum"><span class="badge <?= $row['is_critical']?'badge--warning':'badge--success' ?>"><?= $row['is_critical']?'Kritik':'Uygun' ?></span></td></tr><?php endforeach; ?></tbody></table></div></section>
-<div class="detail-grid inventory-actions"><div class="detail-main"><section class="form-card"><div class="form-card__head"><span class="step-number">1</span><div><h2>Stok hareketi</h2><p>Giriş, çıkış, iade veya depolar arası transfer.</p></div></div><form method="post" action="<?= site_url('panel/stok/hareket') ?>" class="form-grid"><?= csrf_field() ?><label class="field"><span>İşlem</span><select name="movement_type" data-movement-type required><option value="manual_in">Serbest giriş</option><option value="manual_out">Serbest çıkış</option><option value="customer_return">Kullanılabilir müşteri iadesi</option><option value="supplier_return">Tedarikçiye iade</option><option value="transfer">Depolar arası transfer</option></select></label><label class="field"><span>Kaynak depo</span><select name="warehouse_id" required><?php foreach($warehouses as $warehouse): ?><option value="<?= $warehouse['id'] ?>"><?= esc($warehouse['name']) ?></option><?php endforeach; ?></select></label><label class="field field--wide"><span>Ürün varyantı</span><select name="product_variant_id" required><option value="">Seçin</option><?php foreach($variants as $variant): ?><option value="<?= $variant['variant_id'] ?>"><?= esc($variant['product_name'].' · '.$variant['sku']) ?></option><?php endforeach; ?></select></label><label class="field"><span>Miktar</span><input name="quantity" inputmode="decimal" required></label><label class="field" data-target-warehouse hidden><span>Hedef depo</span><select name="target_warehouse_id"><option value="">Seçin</option><?php foreach($warehouses as $warehouse): ?><option value="<?= $warehouse['id'] ?>"><?= esc($warehouse['name']) ?></option><?php endforeach; ?></select></label><label class="field field--wide"><span>Neden / belge</span><textarea name="reason" rows="2" required></textarea></label><button class="button" type="submit">Hareketi kaydet</button></form></section>
-<?php if($canCount): ?><section class="form-card"><div class="form-card__head"><span class="step-number">2</span><div><h2>Stok sayımı</h2><p>Gerçek sayım farkını gerekçeli hareketle düzeltir.</p></div></div><form method="post" action="<?= site_url('panel/stok/sayim') ?>" class="form-grid"><?= csrf_field() ?><label class="field"><span>Depo</span><select name="warehouse_id" required><?php foreach($warehouses as $warehouse): ?><option value="<?= $warehouse['id'] ?>"><?= esc($warehouse['name']) ?></option><?php endforeach; ?></select></label><label class="field"><span>Varyant</span><select name="product_variant_id" required><option value="">Seçin</option><?php foreach($variants as $variant): ?><option value="<?= $variant['variant_id'] ?>"><?= esc($variant['product_name'].' · '.$variant['sku']) ?></option><?php endforeach; ?></select></label><label class="field"><span>Sayılan miktar</span><input name="counted_quantity" inputmode="decimal" required></label><label class="field"><span>Gerekçe</span><input name="reason" required></label><button class="button button--secondary" type="submit">Sayımı tamamla</button></form></section><?php endif; ?></div><aside class="detail-aside"><?php if($canManageWarehouses): ?><section class="form-card compact-card"><h2>Yeni depo</h2><form method="post" action="<?= site_url('panel/stok/depo') ?>"><?= csrf_field() ?><label class="field"><span>Kod</span><input name="code" required></label><label class="field"><span>Ad</span><input name="name" required></label><label class="field"><span>Adres</span><textarea name="address"></textarea></label><button class="button button--block" type="submit">Depo ekle</button></form></section><?php endif; ?></aside></div>
-<section class="panel-card"><div class="section-heading-inline"><div><h2>Hazırlanacak siparişler</h2><p>Onaylı ve açık depo işlemleri.</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Sipariş</th><th>Müşteri</th><th>Kalan</th><th>Durum</th><th>İşlem</th></tr></thead><tbody><?php foreach($fulfillmentOrders as $order): ?><tr><td data-label="Sipariş"><a href="<?= site_url('panel/siparisler/'.$order['id']) ?>"><strong><?= esc($order['document_number']) ?></strong></a></td><td data-label="Müşteri"><?= esc($order['company_name']) ?></td><td data-label="Kalan"><?= number_format((float)$order['remaining'],3,',','.') ?></td><td data-label="Durum"><span class="badge badge--warning"><?= esc($order['status']) ?></span></td><td data-label="İşlem"><form method="post" action="<?= site_url('panel/stok/siparis/'.$order['id'].'/ayir') ?>" class="inline-form"><?= csrf_field() ?><select name="warehouse_id"><?php foreach($warehouses as $warehouse): ?><option value="<?= $warehouse['id'] ?>"><?= esc($warehouse['name']) ?></option><?php endforeach; ?></select><button class="button button--secondary" type="submit">Stok ayır</button></form><?php if(in_array($order['status'],['reserved','procurement_waiting','partially_shipped'],true)): ?><form method="post" action="<?= site_url('panel/stok/siparis/'.$order['id'].'/sevk') ?>" class="inline-form"><?= csrf_field() ?><input name="reason" placeholder="Sevkiyat açıklaması" required><button class="button" type="submit">Sevk et</button></form><?php endif; ?></td></tr><?php endforeach; ?></tbody></table></div></section>
-<section class="panel-card"><div class="section-heading-inline"><div><h2>Son stok hareketleri</h2><p>En yeni 100 değişiklik.</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Hareket</th><th>Ürün</th><th>Depo</th><th>Miktar</th><th>Kalan</th><th>Neden</th><th>Tarih</th></tr></thead><tbody><?php foreach($movements as $row): ?><tr><td data-label="Hareket"><strong><?= esc($row['movement_number']) ?></strong><span class="cell-note"><?= esc($movementLabels[$row['movement_type']]??$row['movement_type']) ?></span></td><td data-label="Ürün"><?= esc($row['product_name']) ?><span class="cell-note"><?= esc($row['sku']) ?></span></td><td data-label="Depo"><?= esc($row['warehouse_name']) ?></td><td data-label="Miktar"><strong><?= (float)$row['quantity']>=0?'+':'' ?><?= number_format((float)$row['quantity'],3,',','.') ?></strong></td><td data-label="Kalan"><?= number_format((float)$row['balance_after'],3,',','.') ?></td><td data-label="Neden"><?= esc($row['reason']) ?></td><td data-label="Tarih"><?= esc(date('d.m.Y H:i',strtotime($row['created_at']))) ?><span class="cell-note"><?= esc($row['username']?:('Kullanıcı #'.$row['user_id'])) ?></span></td></tr><?php endforeach; ?></tbody></table></div></section>
+<?php
+$errors = session('errors') ?? [];
+$qty = static function (float $value): string {
+    $decimals = abs($value - round($value)) < 0.0005 ? 0 : 3;
+
+    return number_format($value, $decimals, ',', '.');
+};
+?>
+<div class="page-actions">
+    <div>
+        <p class="page-lead">Bu alan sadece eldeki stokları görmek içindir. Amaç, kaç ürün olduğunu hızlıca görüp teklif ve sipariş oluştururken rahat karar verebilmektir.</p>
+    </div>
+</div>
+
+<?php if ($errors): ?>
+    <div class="alert alert--error"><strong>İşlem tamamlanamadı.</strong><span><?= esc(reset($errors)) ?></span></div>
+<?php endif; ?>
+
+<div class="stats-grid">
+    <article class="stat-card">
+        <span>Takip edilen varyant</span>
+        <strong><?= count($balances) ?></strong>
+        <small>Seçili depoda</small>
+    </article>
+    <article class="stat-card">
+        <span>Kritik stok</span>
+        <strong><?= $criticalCount ?></strong>
+        <small><?= $criticalCount ? 'Azalan ürünleri takip edin' : 'Kritik eşik altında ürün yok' ?></small>
+    </article>
+    <article class="stat-card">
+        <span>Depo</span>
+        <strong><?= count($warehouses) ?></strong>
+        <small>Tanımlı stok alanı</small>
+    </article>
+</div>
+
+<section class="panel-card">
+    <div class="report-section__head">
+        <div>
+            <h2>Mevcut stok görünümü</h2>
+            <p>Seçili depoda hangi ürün varyantından ne kadar kaldığını buradan izleyin.</p>
+        </div>
+    </div>
+
+    <form class="filter-bar" method="get">
+        <select name="depo" onchange="this.form.submit()" aria-label="Depo">
+            <?php foreach ($warehouses as $warehouse): ?>
+                <option value="<?= $warehouse['id'] ?>" <?= (int) $warehouseId === (int) $warehouse['id'] ? 'selected' : '' ?>><?= esc($warehouse['name']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </form>
+
+    <div class="table-wrap">
+        <table class="data-table stock-table">
+            <colgroup>
+                <col class="stock-table__product-col">
+                <col class="stock-table__qty-col">
+                <col class="stock-table__qty-col">
+                <col class="stock-table__qty-col">
+                <col class="stock-table__status-col">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="stock-table__product">Ürün / varyant</th>
+                    <th class="stock-table__qty">Mevcut</th>
+                    <th class="stock-table__qty">Ayrılmış</th>
+                    <th class="stock-table__qty">Kullanılabilir</th>
+                    <th class="stock-table__status">Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($balances as $row): ?>
+                    <tr>
+                        <td class="stock-table__product" data-label="Ürün">
+                            <strong><?= esc($row['product_name']) ?></strong>
+                            <span class="cell-note"><?= esc($row['sku'].' · '.implode(' / ', array_filter([$row['size'], $row['color']]))) ?></span>
+                        </td>
+                        <td class="stock-table__qty" data-label="Mevcut"><?= $qty((float) $row['on_hand_quantity']) ?></td>
+                        <td class="stock-table__qty" data-label="Ayrılmış"><?= $qty((float) $row['reserved_quantity']) ?></td>
+                        <td class="stock-table__qty" data-label="Kullanılabilir"><strong><?= $qty((float) $row['available_quantity']) ?></strong></td>
+                        <td class="stock-table__status" data-label="Durum">
+                            <span class="badge <?= $row['is_critical'] ? 'badge--warning' : 'badge--success' ?>">
+                                <?= $row['is_critical'] ? 'Kritik' : 'Uygun' ?>
+                            </span>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php if (! $balances): ?>
+        <div class="empty-state">
+            <h2>Stok kaydı bulunamadı</h2>
+            <p>Bu depoda henüz görüntülenecek stok hareketi bulunmuyor.</p>
+        </div>
+    <?php endif; ?>
+</section>
+
+<section class="panel-card">
+    <div class="report-section__head">
+        <div>
+            <h2>Hızlı stok girişi</h2>
+            <p>Buradan sadece basit stok ekleme veya stok düşme işlemi yapın.</p>
+        </div>
+    </div>
+    <form class="filter-bar inventory-quick-form" method="post" action="<?= site_url('panel/stok/hareket') ?>">
+        <?= csrf_field() ?>
+        <label>
+            <span class="sr-only">İşlem</span>
+            <select name="movement_type" required>
+                <option value="manual_in">Stok ekle</option>
+                <option value="manual_out">Stok düş</option>
+            </select>
+        </label>
+        <label>
+            <span class="sr-only">Depo</span>
+            <select name="warehouse_id" required>
+                <?php foreach ($warehouses as $warehouse): ?>
+                    <option value="<?= $warehouse['id'] ?>" <?= (int) $warehouseId === (int) $warehouse['id'] ? 'selected' : '' ?>><?= esc($warehouse['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <label>
+            <span class="sr-only">Ürün varyantı</span>
+            <select name="product_variant_id" required>
+                <option value="">Ürün seçin</option>
+                <?php foreach ($variants as $variant): ?>
+                    <option value="<?= $variant['variant_id'] ?>"><?= esc($variant['product_name'].' · '.$variant['sku']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <label>
+            <span class="sr-only">Miktar</span>
+            <input name="quantity" inputmode="decimal" placeholder="Miktar" required>
+        </label>
+        <label class="inventory-quick-form__reason">
+            <span class="sr-only">Neden</span>
+            <input name="reason" placeholder="Not / neden" required>
+        </label>
+        <button class="button" type="submit">Kaydet</button>
+    </form>
+</section>
+
+<section class="panel-card">
+    <div class="section-heading-inline">
+        <div>
+            <h2>Son stok hareketleri</h2>
+            <p>Son yapılan giriş, çıkış ve güncelleme kayıtları.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Hareket</th>
+                    <th>Ürün</th>
+                    <th>Depo</th>
+                    <th>Miktar</th>
+                    <th>Kalan</th>
+                    <th>Neden</th>
+                    <th>Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($movements as $row): ?>
+                    <tr>
+                        <td data-label="Hareket">
+                            <strong><?= esc($row['movement_number']) ?></strong>
+                            <span class="cell-note"><?= esc($movementLabels[$row['movement_type']] ?? $row['movement_type']) ?></span>
+                        </td>
+                        <td data-label="Ürün">
+                            <?= esc($row['product_name']) ?>
+                            <span class="cell-note"><?= esc($row['sku']) ?></span>
+                        </td>
+                        <td data-label="Depo"><?= esc($row['warehouse_name']) ?></td>
+                        <td data-label="Miktar"><strong><?= (float) $row['quantity'] >= 0 ? '+' : '' ?><?= $qty((float) $row['quantity']) ?></strong></td>
+                        <td data-label="Kalan"><?= $qty((float) $row['balance_after']) ?></td>
+                        <td data-label="Neden"><?= esc($row['reason']) ?></td>
+                        <td data-label="Tarih">
+                            <?= esc(date('d.m.Y H:i', strtotime($row['created_at']))) ?>
+                            <span class="cell-note"><?= esc($row['username'] ?: ('Kullanıcı #'.$row['user_id'])) ?></span>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
 <?= $this->endSection() ?>

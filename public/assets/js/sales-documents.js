@@ -4,6 +4,70 @@
         const savedReference=clear.dataset.clearSalesRef; localStorage.removeItem(`formmix-sales-draft-${savedReference}`);
         ['quote','order'].forEach(type=>{const key=`formmix-sales-active-${type}`;if(localStorage.getItem(key)===savedReference)localStorage.removeItem(key);});
     }
+    document.querySelectorAll('[data-progress-form]').forEach(progressForm => {
+        progressForm.addEventListener('submit', async event => {
+            const submitter = event.submitter;
+            if (!(submitter instanceof HTMLButtonElement) || submitter.name !== 'notify' || submitter.value !== '1') return;
+
+            event.preventDefault();
+            const whatsappWindow = window.open('about:blank', '_blank');
+            if (whatsappWindow) {
+                whatsappWindow.document.title = 'WhatsApp hazırlanıyor';
+                whatsappWindow.document.body.textContent = 'WhatsApp mesajı hazırlanıyor…';
+            }
+
+            const buttons = progressForm.querySelectorAll('button[type="submit"]');
+            buttons.forEach(button => { button.disabled = true; });
+            const originalText = submitter.textContent;
+            submitter.textContent = 'Hazırlanıyor…';
+
+            try {
+                const formData = new FormData(progressForm);
+                formData.set('notify', '1');
+                const progressUrl = progressForm.getAttribute('action');
+                if (!progressUrl) throw new Error('Sipariş işlem adresi bulunamadı.');
+                const response = await fetch(progressUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const data = await response.json();
+                if (! response.ok || ! data.ok || ! data.whatsapp_url) {
+                    throw new Error(data.message || 'WhatsApp mesajı hazırlanamadı.');
+                }
+
+                if (whatsappWindow) {
+                    whatsappWindow.opener = null;
+                    whatsappWindow.location.replace(data.whatsapp_url);
+                    window.location.reload();
+                    return;
+                }
+
+                const ready = document.createElement('div');
+                ready.className = 'alert alert--success whatsapp-ready';
+                const copy = document.createElement('span');
+                copy.textContent = 'Durum güncellendi. WhatsApp bağlantısını açın.';
+                const link = document.createElement('a');
+                link.className = 'button button--secondary';
+                link.href = data.whatsapp_url;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = 'WhatsApp mesajını aç';
+                ready.append(copy, link);
+                progressForm.closest('.workflow-actions-card')?.prepend(ready);
+                buttons.forEach(button => { button.disabled = false; });
+                submitter.textContent = originalText;
+            } catch (error) {
+                whatsappWindow?.close();
+                buttons.forEach(button => { button.disabled = false; });
+                submitter.textContent = originalText;
+                window.alert(error.message || 'WhatsApp mesajı hazırlanamadı.');
+            }
+        });
+    });
     const form = document.querySelector('[data-sales-document]');
     if (!form) return;
     const catalog = JSON.parse(form.querySelector('[data-catalog-json]')?.value || '[]');

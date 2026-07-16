@@ -39,6 +39,18 @@ if (! function_exists('whatsapp_link')) {
     }
 }
 
+if (! function_exists('whatsapp_contact_link')) {
+    /**
+     * Belirli bir telefon numarasi icin wa.me linki uretir.
+     */
+    function whatsapp_contact_link(string $phone, string $text): string
+    {
+        $number = preg_replace('/\D+/', '', $phone);
+
+        return 'https://wa.me/' . $number . '?text=' . rawurlencode($text);
+    }
+}
+
 if (! function_exists('phone_link')) {
     /**
      * Aranabilir tel: linki uretir.
