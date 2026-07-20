@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.android-downloads/
+.expo/
+android/
+ios/
+.env
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist

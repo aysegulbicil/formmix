@@ -1,0 +1,8 @@
+{
+  "cli": { "version": ">= 16.0.0" },
+  "build": {
+    "development": { "developmentClient": true, "distribution": "internal", "android": { "buildType": "apk" }, "env": { "APP_ENV": "development" } },
+    "staging": { "distribution": "internal", "android": { "buildType": "apk" }, "env": { "APP_ENV": "staging", "EXPO_PUBLIC_API_BASE_URL": "https://staging.formmix.com.tr/api/v1" } },
+    "production": { "distribution": "internal", "android": { "buildType": "apk" }, "env": { "APP_ENV": "production", "EXPO_PUBLIC_API_BASE_URL": "https://www.formmix.com.tr/api/v1" } }
+  }
+}

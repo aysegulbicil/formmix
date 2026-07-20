@@ -41,7 +41,7 @@ class VerifyReportFoundation extends BaseCommand
             $db->table('product_variants')->insert(['product_id' => $product, 'sku' => 'RPR-V-'.$suffix, 'size' => 'L', 'color' => 'Lacivert', 'preparation_type' => 'plain', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now]);
             $variant = (int) $db->insertID();
             $approved = $this->document($db, $suffix.'-A', $customer, $employee, (int) $user['id'], 'approved', $now, 200, 20, 36, 216);
-            $pending = $this->document($db, $suffix.'-P', $customer, $employee, (int) $user['id'], 'pending_approval', $now, 50, 0, 10, 60);
+            $pending = $this->document($db, $suffix.'-P', $customer, $employee, (int) $user['id'], 'draft', $now, 50, 0, 10, 60);
             foreach ([[$approved, 2, 180, 36, 216, 0], [$pending, 1, 50, 10, 60, 0]] as [$document, $quantity, $net, $tax, $total, $fulfilled]) {
                 $db->table('sales_document_items')->insert(['sales_document_id' => $document, 'product_id' => $product, 'product_variant_id' => $variant, 'product_code_snapshot' => 'RPR-U-'.$suffix, 'product_name_snapshot' => 'Rapor Ürün', 'variant_snapshot' => 'L / Lacivert', 'quantity' => $quantity, 'reserved_quantity' => 0, 'fulfilled_quantity' => $fulfilled, 'unit_price' => 100, 'discount_percent' => $document === $approved ? 10 : 0, 'discount_amount' => $document === $approved ? 20 : 0, 'net_amount' => $net, 'tax_rate' => 20, 'tax_amount' => $tax, 'line_total' => $total, 'created_at' => $now, 'updated_at' => $now]);
             }
@@ -55,12 +55,13 @@ class VerifyReportFoundation extends BaseCommand
             $this->assert($report['summary']['order_count'] === 1 && $report['summary']['net_sales'] === 180.0, 'Net satış özeti yanlış.');
             $this->assert(count($report['employees']) === 1 && $report['employees'][0]['quantity'] === 2.0, 'Personel raporu yanlış.');
             $this->assert(count($report['products']) === 1 && $report['products'][0]['cost_total'] === 120.0 && $report['products'][0]['gross_profit'] === 60.0, 'Brüt kârlılık raporu yanlış.');
-            $this->assert(count($report['orders']) === 1 && $report['orders'][0]['status'] === 'pending_approval', 'Bekleyen sipariş raporu yanlış.');
+            $attentionStatuses = array_column($report['orders'], 'status');
+            $this->assert(count($report['orders']) === 2 && in_array('draft', $attentionStatuses, true) && in_array('approved', $attentionStatuses, true), 'İlgilenilecek sipariş raporu yanlış.');
             $stock = array_values(array_filter($report['stock'], static fn ($row) => $row['sku'] === 'RPR-V-'.$suffix));
             $this->assert(count($stock) === 1 && $stock[0]['available'] === 6.0 && $stock[0]['is_critical'], 'Kritik stok raporu yanlış.');
             $this->assert(count($report['commissions']) === 1 && $report['commissions'][0]['commission_amount'] === 9.0, 'Prim özeti yanlış.');
             $dashboard = (new ReportService($db))->dashboard();
-            $this->assert($dashboard['monthNetSales'] >= 180.0 && $dashboard['pendingApprovalCount'] >= 1, 'Yönetim ana sayfası göstergeleri yanlış.');
+            $this->assert($dashboard['monthNetSales'] >= 180.0 && $dashboard['openOrderCount'] >= 1, 'Yönetim ana sayfası göstergeleri yanlış.');
             $export = (new ReportService($db))->export('urun', $report, true);
             $writer = new SpreadsheetExporter();
             $csv = $writer->csv($export['headers'], $export['rows']);

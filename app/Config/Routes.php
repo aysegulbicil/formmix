@@ -14,9 +14,39 @@ $routes->get('katalog', 'Catalog::index');
 $routes->get('iletisim', 'Contact::index');
 $routes->post('iletisim', 'Contact::submit');
 $routes->get('urun-gorselleri/(:segment)', 'ProductMedia::show/$1');
+$routes->get('mobil', 'Mobile::index');
 
 service('auth')->routes($routes, ['except' => ['register', 'logout']]);
 $routes->post('logout', '\\CodeIgniter\\Shield\\Controllers\\LoginController::logoutAction');
+
+$routes->group('api/v1', ['namespace' => 'App\\Controllers\\Api\\V1'], static function ($routes): void {
+    $routes->post('auth/login', 'AuthController::login', ['filter' => 'auth-rates']);
+    $routes->get('app/releases/current', 'OverviewController::release');
+    $routes->group('', ['filter' => 'mobile-auth:mobile'], static function ($routes): void {
+        $routes->post('auth/logout', 'AuthController::logout');
+        $routes->get('me', 'AuthController::me');
+        $routes->get('bootstrap', 'OverviewController::bootstrap');
+        $routes->get('devices/current', 'OverviewController::device');
+        $routes->put('devices/push-token', 'OverviewController::pushToken');
+        $routes->get('notifications', 'OverviewController::notifications');
+        $routes->post('notifications/(:num)/read', 'OverviewController::readNotification/$1');
+        $routes->get('customers', 'CustomersController::index');
+        $routes->post('customers/duplicate-check', 'CustomersController::duplicateCheck');
+        $routes->get('customers/(:num)', 'CustomersController::show/$1');
+        $routes->post('customers', 'CustomersController::create');
+        $routes->put('customers/(:num)', 'CustomersController::update/$1');
+        $routes->post('customers/(:num)/activities', 'CustomersController::activity/$1');
+        $routes->get('products', 'CatalogController::index');
+        $routes->get('products/(:num)', 'CatalogController::show/$1');
+        $routes->get('products/(:num)/price', 'CatalogController::price/$1');
+        $routes->get('employees', 'DirectoryController::employees');
+        $routes->get('sales-documents', 'SalesDocumentsController::index');
+        $routes->get('sales-documents/(:num)', 'SalesDocumentsController::show/$1');
+        $routes->post('sales-documents', 'SalesDocumentsController::create');
+        $routes->post('sales-documents/(:num)/finalize', 'SalesDocumentsController::finalize/$1');
+        $routes->post('sales-documents/(:num)/convert-to-order', 'SalesDocumentsController::convert/$1');
+    });
+});
 
 $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], static function ($routes): void {
     $routes->get('/', 'Panel\\Dashboard::index');
@@ -68,6 +98,7 @@ $routes->group('panel', ['filter' => ['session', 'permission:panel.access']], st
         $routes->get('(:num)/duzenle', 'Panel\\SalesDocuments::edit/$1', ['filter' => 'permission:orders.create']);
         $routes->post('(:num)/duzenle', 'Panel\\SalesDocuments::update/$1', ['filter' => 'permission:orders.create']);
         $routes->post('(:num)/gonder', 'Panel\\SalesDocuments::submit/$1', ['filter' => 'permission:orders.create']);
+        $routes->post('(:num)/kesinlestir', 'Panel\\SalesDocuments::finalizeQuote/$1', ['filter' => 'permission:orders.create']);
         $routes->post('(:num)/surec', 'Panel\\SalesDocuments::progress/$1');
         $routes->post('(:num)/onayla', 'Panel\\SalesDocuments::approve/$1', ['filter' => 'permission:orders.approve']);
         $routes->post('(:num)/reddet', 'Panel\\SalesDocuments::reject/$1', ['filter' => 'permission:orders.approve']);

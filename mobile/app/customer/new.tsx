@@ -1,0 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { router } from 'expo-router';
+import { Alert } from 'react-native';
+import { z } from 'zod';
+import * as Crypto from 'expo-crypto';
+import { api, ApiError } from '@/api';
+import { Button, Field, Header, Screen } from '@/components';
+import { queue } from '@/outbox';
+const schema=z.object({company_name:z.string().min(2),city:z.string().min(2),district:z.string().min(2),contact_name:z.string().min(2),contact_phone:z.string().min(7),tax_number:z.string().optional(),delivery_address:z.string().optional()});type Form=z.infer<typeof schema>;
+export default function NewCustomer(){const{control,handleSubmit,setError,formState:{isSubmitting}}=useForm<Form>({resolver:zodResolver(schema),defaultValues:{company_name:'',city:'',district:'',contact_name:'',contact_phone:'',tax_number:'',delivery_address:''}});const submit=handleSubmit(async value=>{const key=Crypto.randomUUID();try{const result=await api<{data:{id:number}}>('/customers',{method:'POST',body:JSON.stringify(value),idempotencyKey:key});router.replace(`/customer/${result.data.id}`);}catch(error){if(error instanceof ApiError&&error.status>0){setError('root',{message:error.message});return;}await queue('customer.create','POST','/customers',value);Alert.alert('Taslak kaydedildi','Baglanti geldiginde Daha fazla > Senkronize et ile gonderebilirsiniz.');router.back();}});return <Screen><Header title="Yeni musteri" subtitle="Zorunlu alanlari doldurun"/>{(['company_name','city','district','contact_name','contact_phone','tax_number','delivery_address'] as const).map(name=><Controller key={name} control={control} name={name} render={({field,fieldState})=><Field label={({company_name:'Firma adi',city:'Il',district:'Ilce',contact_name:'Yetkili kisi',contact_phone:'Telefon',tax_number:'Vergi numarasi',delivery_address:'Teslimat adresi'} as const)[name]} value={field.value} onChangeText={field.onChange} error={fieldState.error?.message} multiline={name==='delivery_address'} keyboardType={name==='contact_phone'?'phone-pad':'default'}/>}/>) }<Button title="Kaydet" onPress={submit} loading={isSubmitting}/></Screen>}

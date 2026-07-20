@@ -35,6 +35,8 @@ class AuditLogger
             'new_values'  => $newValues === null ? null : json_encode($newValues, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             'ip_address'  => $ip,
             'user_agent'  => substr($agent, 0, 255),
+            'source'      => is_cli() ? 'command' : (str_starts_with((string) $request->getPath(), 'api/') ? 'mobile' : 'web'),
+            'device_id'   => method_exists($request, 'getHeaderLine') ? (trim($request->getHeaderLine('X-Device-ID')) ?: null) : null,
             'created_at'  => date('Y-m-d H:i:s'),
         ]) !== false;
     }

@@ -168,6 +168,10 @@ class SalesDocuments extends BaseController
             'types' => self::TYPES,
             'statuses' => self::STATUSES,
             'canEdit' => $this->isEditable($doc),
+            'canFinalizeQuote' => $doc['document_type'] === 'quote'
+                && $doc['status'] === 'draft'
+                && (int) $doc['created_by_user_id'] === (int) auth()->id()
+                && $this->canCreate(),
             'canCancel' => $this->canCancel($doc),
             'canFulfill' => ($doc['document_type'] === 'order' && (auth()->user()?->can('orders.fulfill') ?? false)),
             'warehouses' => (new WarehouseModel())->where('is_active', 1)->orderBy('name')->findAll(),
@@ -208,6 +212,15 @@ class SalesDocuments extends BaseController
             return redirect()->back()->with('errors', ['submit' => 'Siparis olusturulmadan once teslimat adresi zorunludur.']);
         }
 
+        try {
+            $this->enforceDiscountLimit(
+                (new SalesDocumentItemModel())->where('sales_document_id', $id)->findAll(),
+                (int) ($doc['sales_employee_id'] ?? 0)
+            );
+        } catch (RuntimeException $e) {
+            return redirect()->back()->with('errors', ['discount' => $e->getMessage()]);
+        }
+
         (new SalesDocumentModel())->update($id, [
             'status' => 'approved',
             'approved_by_user_id' => auth()->id(),
@@ -218,6 +231,35 @@ class SalesDocuments extends BaseController
         (new AuditLogger())->record('order.created', 'sales_document', $id, ['status' => $doc['status']], ['status' => 'approved']);
 
         return redirect()->back()->with('message', 'Siparis olusturuldu.');
+    }
+
+    public function finalizeQuote(int $id): RedirectResponse
+    {
+        $quote = $this->visibleDocument($id);
+        if ($quote['document_type'] !== 'quote' || $quote['status'] !== 'draft'
+            || (int) $quote['created_by_user_id'] !== (int) auth()->id() || ! $this->canCreate()) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
+        try {
+            $this->enforceDiscountLimit(
+                (new SalesDocumentItemModel())->where('sales_document_id', $id)->findAll(),
+                (int) ($quote['sales_employee_id'] ?? 0)
+            );
+        } catch (RuntimeException $e) {
+            return redirect()->back()->with('errors', ['discount' => $e->getMessage()]);
+        }
+
+        $now = date('Y-m-d H:i:s');
+        (new SalesDocumentModel())->update($id, [
+            'status' => 'approved',
+            'approved_by_user_id' => auth()->id(),
+            'approved_at' => $now,
+        ]);
+        $this->history($id, 'draft', 'approved', 'Teklif hazirlayan kullanici tarafindan kesinlestirildi');
+        (new AuditLogger())->record('quote.finalized', 'sales_document', $id, ['status' => 'draft'], ['status' => 'approved']);
+
+        return redirect()->back()->with('message', 'Teklif kesinlestirildi; artik degistirilemez.');
     }
 
     public function progress(int $id): RedirectResponse|ResponseInterface
@@ -379,10 +421,13 @@ class SalesDocuments extends BaseController
                 'document_type' => 'order',
                 'source_quote_id' => $id,
                 'created_by_user_id' => auth()->id(),
-                'approved_by_user_id' => auth()->id(),
-                'approved_at' => date('Y-m-d H:i:s'),
-                'status' => 'approved',
+                'approved_by_user_id' => null,
+                'approved_at' => null,
+                'status' => 'draft',
                 'client_reference' => 'convert-'.bin2hex(random_bytes(16)),
+                'preparation_employee_id' => null,
+                'design_employee_id' => null,
+                'print_employee_id' => null,
             ];
 
             $model = new SalesDocumentModel();
@@ -398,7 +443,7 @@ class SalesDocuments extends BaseController
                 (new SalesDocumentItemModel())->insert($item);
             }
 
-            $this->history($newId, null, 'approved', 'Onayli '.$quote['document_number'].' teklifinden siparis olusturuldu');
+            $this->history($newId, null, 'draft', 'Kesinlesmis '.$quote['document_number'].' teklifinden siparis taslagi olusturuldu');
             $db->transCommit();
         } catch (Throwable $e) {
             $db->transRollback();
@@ -408,7 +453,7 @@ class SalesDocuments extends BaseController
 
         (new AuditLogger())->record('quote.converted', 'sales_document', $id, null, ['order_id' => $newId]);
 
-        return redirect()->to(site_url('panel/siparisler/'.$newId))->with('message', 'Teklif baglantisi korunarak siparis olusturuldu.');
+        return redirect()->to(site_url('panel/siparisler/'.$newId.'/duzenle'))->with('message', 'Siparis taslagi olusturuldu. Teslimat adresi ve uretim sorumlularini tamamlayin.');
     }
 
     private function persist(?array $document): RedirectResponse
@@ -443,6 +488,14 @@ class SalesDocuments extends BaseController
         $intent = (string) $this->request->getPost('intent');
         $status = $type === 'order' && $intent === 'submit' ? 'approved' : 'draft';
         $approvedAt = $status === 'approved' ? date('Y-m-d H:i:s') : null;
+
+        if ($status === 'approved') {
+            try {
+                $this->enforceDiscountLimit($prepared['items'], (int) ($salesEmployee ?? 0));
+            } catch (RuntimeException $e) {
+                return redirect()->back()->withInput()->with('errors', ['discount' => $e->getMessage()]);
+            }
+        }
 
         try {
             $productionAssignees = $this->resolveProductionAssignees($type, $status);
@@ -561,6 +614,27 @@ class SalesDocuments extends BaseController
         }
 
         return ['items' => $items, 'totals' => $calculator->calculateDocument($lines)];
+    }
+
+    private function enforceDiscountLimit(array $items, int $employeeId): void
+    {
+        $employee = $employeeId > 0 ? (new EmployeeModel())->find($employeeId) : null;
+        if (! $employee) {
+            throw new RuntimeException('Siparis veya teklif kesinlestirilmeden once satis personeli belirlenmelidir.');
+        }
+
+        $limit = (float) $employee['max_discount_percent'];
+        foreach ($items as $item) {
+            $discount = (float) ($item['discount_percent'] ?? 0);
+            if ($discount > $limit + 0.00001) {
+                throw new RuntimeException(sprintf(
+                    '%s icin indirim siniri %s%%; %s%% indirimle kayit kesinlestirilemez.',
+                    $employee['full_name'],
+                    rtrim(rtrim(number_format($limit, 2, '.', ''), '0'), '.'),
+                    rtrim(rtrim(number_format($discount, 2, '.', ''), '0'), '.')
+                ));
+            }
+        }
     }
 
     private function formData(?array $doc, string $type, int $customerId): array

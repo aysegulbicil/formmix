@@ -65,6 +65,12 @@ $currentStep = $statusToStep[$document['status']] ?? -1;
         <?php if ($canEdit): ?>
             <a class="button button--secondary" href="<?= site_url('panel/siparisler/'.$document['id'].'/duzenle') ?>">Düzenle</a>
         <?php endif; ?>
+        <?php if ($canFinalizeQuote): ?>
+            <form method="post" action="<?= site_url('panel/siparisler/'.$document['id'].'/kesinlestir') ?>" onsubmit="return confirm('Teklif kesinlestikten sonra degistirilemez. Devam edilsin mi?')">
+                <?= csrf_field() ?>
+                <button class="button" type="submit">Teklifi kesinlestir</button>
+            </form>
+        <?php endif; ?>
         <?php if ($document['document_type'] === 'quote' && $document['status'] === 'approved' && auth()->user()?->can('orders.create')): ?>
             <form method="post" action="<?= site_url('panel/siparisler/'.$document['id'].'/siparise-cevir') ?>">
                 <?= csrf_field() ?>

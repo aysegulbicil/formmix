@@ -1,0 +1,3 @@
+import { api } from './api';
+import { db } from './database';
+export async function cachedApi<T>(cacheKey:string,path=cacheKey):Promise<T>{try{const result=await api<T>(path);await(await db()).runAsync('INSERT INTO cache (cache_key,payload,updated_at) VALUES (?,?,?) ON CONFLICT(cache_key) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at',cacheKey,JSON.stringify(result),new Date().toISOString());return result;}catch(error){const row=await(await db()).getFirstAsync<{payload:string}>('SELECT payload FROM cache WHERE cache_key=?',cacheKey);if(row)return JSON.parse(row.payload)as T;throw error;}}

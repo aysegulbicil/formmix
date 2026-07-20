@@ -21,6 +21,8 @@ class AuditLogModel extends Model
         'new_values',
         'ip_address',
         'user_agent',
+        'source',
+        'device_id',
         'created_at',
     ];
 }

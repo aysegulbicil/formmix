@@ -12,6 +12,8 @@
 
 # Yerel veritabanı yedekleri
 /backups/
+/public/downloads/*.apk
+!/public/downloads/.gitkeep
 
 # Ortam
 .env
