@@ -18,6 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     ['expo-sqlite', { useSQLCipher: true }],
     ['expo-notifications', { icon: './assets/notification-icon.png', color: '#F47A20' }],
+    'expo-sharing',
     ['expo-build-properties', { android: { minSdkVersion: 24, compileSdkVersion: 36, targetSdkVersion: 36, usesCleartextTraffic: (process.env.APP_ENV ?? 'development') === 'development' } }],
   ],
   android: {

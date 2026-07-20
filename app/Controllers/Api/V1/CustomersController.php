@@ -93,6 +93,25 @@ final class CustomersController extends ApiController
         return $this->response->setStatusCode(201)->setJSON($body);
     }
 
+    public function assignment(int $id): ResponseInterface
+    {
+        if ($blocked = $this->guard('customers.assign')) return $blocked;
+        $customer = (new CustomerModel())->find($id);
+        if (! $customer) return $this->error('NOT_FOUND', 'Müşteri bulunamadı.', 404);
+        $input = $this->input(); $employeeId = (int) ($input['employee_id'] ?? 0); $reason = trim((string) ($input['reason'] ?? ''));
+        $employee = (new \App\Models\EmployeeModel())->where('is_active', 1)->find($employeeId);
+        if (! $employee || $reason === '') return $this->error('VALIDATION_FAILED', 'Etkin personel ve devir gerekçesi zorunludur.', 422, ['employee_id' => 'Etkin personel seçin.', 'reason' => 'Gerekçe zorunludur.']);
+        $db = db_connect(); $db->transBegin();
+        try {
+            (new CustomerAssignmentModel())->where('customer_id', $id)->where('ended_at', null)->set(['ended_at' => date('Y-m-d H:i:s')])->update();
+            (new CustomerAssignmentModel())->insert(['customer_id' => $id, 'employee_id' => $employeeId, 'started_at' => date('Y-m-d H:i:s'), 'reason' => $reason, 'assigned_by_user_id' => auth()->id(), 'created_at' => date('Y-m-d H:i:s')]);
+            (new CustomerModel())->update($id, ['current_owner_employee_id' => $employeeId]);
+            if (! $db->transStatus()) throw new RuntimeException('Müşteri devredilemedi.'); $db->transCommit();
+        } catch (Throwable $e) { $db->transRollback(); return $this->error('ASSIGNMENT_FAILED', $e->getMessage(), 422); }
+        (new AuditLogger())->record('customer.assigned', 'customer', $id, ['employee_id' => $customer['current_owner_employee_id'] ?? null], ['employee_id' => $employeeId, 'reason' => $reason]);
+        return $this->ok(['id' => $id, 'employee_id' => $employeeId]);
+    }
+
     private function save(?array $customer): ResponseInterface
     {
         $input = $this->input();
