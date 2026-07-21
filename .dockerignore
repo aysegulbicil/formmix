@@ -15,3 +15,10 @@ instagram
 Dockerfile*
 compose*.yaml
 DOCKER.md
+
+# Mobile app and local build caches are not needed in the backend image.
+mobile
+node_modules
+.gradle
+build
+dist

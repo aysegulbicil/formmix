@@ -40,3 +40,33 @@ if (controller.includes(safeCategoryCopy)) {
   fs.writeFileSync(controllerPath, controller.replace(unsafeCategoryCopy, safeCategoryCopy));
   process.stdout.write('Patched Expo development launcher intent category handling.\n');
 }
+
+const autolinkingRoot = path.dirname(require.resolve('expo-modules-autolinking/package.json'));
+const reactNativeConfigPath = path.join(
+  autolinkingRoot,
+  'build',
+  'reactNativeConfig',
+  'reactNativeConfig.js',
+);
+const reactNativeConfig = fs.readFileSync(reactNativeConfigPath, 'utf8');
+const canonicalModulePath =
+  'const modulePath = shouldUseOriginPath ? resolution.originPath : resolution.path;';
+const windowsShortModulePath = `const shortProjectRoot = process.env.FORMMIX_PROJECT_ROOT;
+    const nodeModulesSegment = \`\${path_1.default.sep}node_modules\${path_1.default.sep}\`;
+    const nodeModulesIndex = resolution.path.indexOf(nodeModulesSegment);
+    const shortModulePath = shortProjectRoot && nodeModulesIndex >= 0
+        ? path_1.default.join(shortProjectRoot, 'node_modules', resolution.path.slice(nodeModulesIndex + nodeModulesSegment.length))
+        : null;
+    const modulePath = shortModulePath || (shouldUseOriginPath ? resolution.originPath : resolution.path);`;
+
+if (reactNativeConfig.includes(windowsShortModulePath)) {
+  process.stdout.write('Expo native autolinking already supports a short Windows project root.\n');
+} else if (!reactNativeConfig.includes(canonicalModulePath)) {
+  throw new Error('Unsupported Expo autolinking layout; Windows project-root handling was not patched.');
+} else {
+  fs.writeFileSync(
+    reactNativeConfigPath,
+    reactNativeConfig.replace(canonicalModulePath, windowsShortModulePath),
+  );
+  process.stdout.write('Patched Expo native autolinking for a short Windows project root.\n');
+}
