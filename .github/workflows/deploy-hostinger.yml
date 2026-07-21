@@ -1,0 +1,29 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          script_stop: true
+          script: |
+            cd "${{ secrets.HOSTINGER_DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+            if [ -d public ] && [ ! -d public_html ]; then
+              mv public public_html
+            fi
+            composer install --no-dev --optimize-autoloader --no-interaction
+            php spark migrate --all
